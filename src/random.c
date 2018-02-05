@@ -8,14 +8,16 @@
 int main(int argc, char const *argv[])
 {
     srand(time(NULL));
-    
+
     int nbNodes = atoi(argv[1]);
     int nbEdges = atoi(argv[2]);
+    int nbTerminals = atoi(argv[3]);
     int matrix[nbNodes][nbNodes];
-    initMatrix(nbNodes, matrix);
-    displayMatrix(nbNodes, matrix);
-    printf("\n\n");
-    createRandomMatrix(nbNodes, nbEdges, matrix);
-    displayMatrix(nbNodes, matrix);
+    int* terminals = createTerminals(nbTerminals, nbNodes);
+    int i;
+    for(i = 0; i < nbTerminals; i++)
+    {
+        printf("%d\n", terminals[i]);
+    }
     return 0;
 }

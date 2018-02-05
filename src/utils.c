@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#include <time.h>
 
 void initMatrix(int size, int matrix[][size])
 {
@@ -35,6 +34,7 @@ void displayMatrix(int size, int matrix[][size])
 void createEdges(int size, int matrix[][size], int u, int v, int w)
 {
     matrix[u][v] = w;
+    matrix[v][u] = w;
 }
 
 int ifEdgesExist(int size, int matrix[][size], int u, int v)
@@ -43,12 +43,17 @@ int ifEdgesExist(int size, int matrix[][size], int u, int v)
     {
         return(matrix[u][v]);
     }
+    else if(matrix[v][u] > 0)
+    {
+        return(matrix[v][u])
+    }
     return(0);
 }
 
 void deleteEdges(int size, int matrix[][size], int u, int v)
 {
     matrix[u][v] = 0;
+    matrix[v][u] = 0;
 }
 
 void createRandomMatrix(int nbNodes, int nbEdges, int matrix[][nbNodes])
@@ -66,19 +71,19 @@ void createRandomMatrix(int nbNodes, int nbEdges, int matrix[][nbNodes])
         if(u == v) continue;
         else
         {
-            matrix[u][v] = w;
+            createEdges(nbNodes, matrix, u, v, w)
             i++;
         }
     }
 }
 
-int* createRandomTerminals(int nbTerminals, int nbNodes)
+int* createTerminals(int nbTerminals, int nbNodes)
 {
-    int res[nbTerminals];
+    int* res = malloc(sizeof(int) * nbTerminals);
     int i;
-    for(i = 0; i < nbTerminals; i++)
+    for(i = 1; i <= nbTerminals; i++)
     {
-        res[i] = (rand() % (nbNodes)) + 1;
+        res[i-1] = i;
     }
     return res;
 }
