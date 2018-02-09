@@ -1,15 +1,21 @@
-CC=gcc
-LDFLAGS=
-CFLAGS =-W -Wall -ansi -pedantic
+CC = gcc
+LDFLAGS =
+CFLAGS = -W -Wall -ansi -pedantic
 
-DIR=.
-BIN=$(DIR)/bin/
-OBJ=$(DIR)/obj/
-SRC=$(DIR)/src/
+DIR = .
+BIN = $(DIR)/bin/
+OBJ = $(DIR)/obj/
+SRC = $(DIR)/src/
 
-EXEC= $(BIN)graph $(BIN)random
+EXEC = $(BIN)graph $(BIN)random
+TEST = $(BIN)test
 
 all: $(EXEC)
+
+test: $(TEST)
+
+$(BIN)test: $(OBJ)utils.o $(OBJ)test.o
+	$(CC) -o $(BIN)test $(OBJ)test.o $(OBJ)utils.o $(LDFLAGS)
 
 $(BIN)graph: $(OBJ)utils.o $(OBJ)graph.o
 	$(CC) -o $(BIN)graph $(OBJ)graph.o $(OBJ)utils.o $(LDFLAGS)
@@ -25,6 +31,9 @@ $(OBJ)graph.o: $(SRC)graph.c $(SRC)utils.h
 
 $(OBJ)random.o: $(SRC)random.c $(SRC)utils.h
 	$(CC) -o $(OBJ)random.o -c $(SRC)random.c $(CFLAGS)
+
+$(OBJ)test.o: $(SRC)test.c $(SRC)utils.h
+	$(CC) -o $(OBJ)test.o -c $(SRC)test.c $(CFLAGS)
 
 clean:
 	rm $(OBJ)*.o $(BIN)*

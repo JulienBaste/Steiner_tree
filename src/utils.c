@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 void initMatrix(int size, int matrix[][size])
 {
@@ -45,7 +46,7 @@ int ifEdgesExist(int size, int matrix[][size], int u, int v)
     }
     else if(matrix[v][u] > 0)
     {
-        return(matrix[v][u])
+        return(matrix[v][u]);
     }
     return(0);
 }
@@ -71,13 +72,13 @@ void createRandomMatrix(int nbNodes, int nbEdges, int matrix[][nbNodes])
         if(u == v) continue;
         else
         {
-            createEdges(nbNodes, matrix, u, v, w)
+            createEdges(nbNodes, matrix, u, v, w);
             i++;
         }
     }
 }
 
-int* createTerminals(int nbTerminals, int nbNodes)
+int* createTerminals(int nbTerminals)
 {
     int* res = malloc(sizeof(int) * nbTerminals);
     int i;
@@ -87,3 +88,35 @@ int* createTerminals(int nbTerminals, int nbNodes)
     }
     return res;
 }
+
+
+
+/*void combination(char n[], int k, int startPosition, char result[])
+{
+    printf("%s\n", n);
+    int i;
+    int tmp = strlen(n) - k;
+    printf("%s\n", result);
+    if(k == 0)
+    {
+        printf("%s\n", result);
+    }
+    for(i = startPosition; i <= tmp; i++)
+    {
+        printf("%d %d\n", i, tmp);
+        printf("%c\n", n[i]);
+        result[startPosition] = n[i];
+        printf("resultTMP : %c\n", result[tmp]);
+        printf("result : %s\n", result);
+        combination(n, k-1, i+1, result);
+    }
+}
+
+int* steiner(int size, int matrix[][size], int nbTerminals, int terminals)
+{
+    int i;
+    for(i = 0; i < nbTerminals; i++)
+    {
+
+    }
+}*/

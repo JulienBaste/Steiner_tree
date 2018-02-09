@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
     int nbEdges = atoi(argv[2]);
     int nbTerminals = atoi(argv[3]);
     int matrix[nbNodes][nbNodes];
-    int* terminals = createTerminals(nbTerminals, nbNodes);
+    int* terminals = createTerminals(nbTerminals);
     int i;
     for(i = 0; i < nbTerminals; i++)
     {
