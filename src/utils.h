@@ -10,8 +10,8 @@ void combination(char n[], int k, int startPosition, char result[]);
 typedef struct niceTD niceTD;
 struct niceTD
 {
-    int type;
-    int bag[];
     niceTD* filsGauche;
     niceTD* filsDroit;
-}
+    int type;
+    int bag[];
+};
