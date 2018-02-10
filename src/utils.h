@@ -5,7 +5,9 @@ int ifEdgesExist(int size, int matrix[][size], int u, int v);
 void deleteEdges(int size, int matrix[][size], int u, int v);
 void createRandomMatrix(int nbNodes, int nbEdges, int matrix[][nbNodes]);
 int* createTerminals(int nbTerminals);
-void combination(char n[], int k, int startPosition, char result[]);
+void getNbNodes(FILE* file, int* nbNodes);
+void getNbEdges(FILE* file, int* nbEdges);
+void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes]);
 
 typedef struct niceTD niceTD;
 struct niceTD

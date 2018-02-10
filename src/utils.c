@@ -57,7 +57,7 @@ void deleteEdges(int size, int matrix[][size], int u, int v)
     matrix[v][u] = 0;
 }
 
-void createRandomMatrix(int nbNodes, int nbEdges, int matrix[][nbNodes])
+void createRandomMatrix(int nbNodes, int nbEdges, int* matrix)
 {
     int i = 0;
     int u;
@@ -87,6 +87,33 @@ int* createTerminals(int nbTerminals)
         res[i-1] = i;
     }
     return res;
+}
+
+void getNbNodes(FILE* file, int* nbNodes)
+{
+    fseek(file, 20, SEEK_SET);
+    fscanf(file, "%d", nbNodes);
+}
+
+void getNbEdges(FILE* file, int* nbEdges)
+{
+    fseek(file, 7, SEEK_CUR);
+    fscanf(file, "%d", nbEdges);
+}
+
+void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes])
+{
+    int u;
+    int v;
+    int w;
+    int i;
+
+    for(i = 0; i < nbEdges; i++)
+    {
+        fseek(file, 3, SEEK_CUR);
+        fscanf(file, "%d %d %d", &u, &v, &w);
+        createEdges(nbNodes, matrix, u, v, w);
+    }
 }
 
 
