@@ -10,6 +10,7 @@
 
 int main(int argc, char const *argv[])
 {
+    int nbTerminals;
     int nbBags;
     int treeWidth;
     int nbNodes;
@@ -38,8 +39,11 @@ int main(int argc, char const *argv[])
         fscanf(file, "%d %d %d", &u, &v, &w);
         createEdges(nbNodes, matrix, u, v, w);
     }
-
-    fgets(buffer, BUFSIZE, file);
+    for(i = 0; i < 34; i++)
+    {
+        fgetc(file);
+    }
+    fscanf(file, "%d", &nbTerminals);
     while(strcmp(buffer, "SECTION Tree Decomposition\n") != 0)
     {
         fgets(buffer, BUFSIZE, file);
@@ -53,7 +57,6 @@ int main(int argc, char const *argv[])
         fgetc(file);
     }
     fscanf(file, "%d %d %d\n", &nbBags, &treeWidth, &nbNodes);
-    printf("%d %d %d\n", nbBags, treeWidth, nbNodes);
     fclose(file);
 
     return(0);
