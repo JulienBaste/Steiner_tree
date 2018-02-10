@@ -29,31 +29,31 @@ int main(int argc, char const *argv[])
     fseek(file, 20, SEEK_SET);
     fscanf(file, "%d", &nbNodes);
     int matrix[nbNodes][nbNodes];
+    initMatrix(nbNodes, matrix);
     fseek(file, 7, SEEK_CUR);
     fscanf(file, "%d", &nbEdges);
     for(i; i < nbEdges; i++)
     {
         fseek(file, 3, SEEK_CUR);
         fscanf(file, "%d %d %d", &u, &v, &w);
-        matrix[u][v] = w;
-        matrix[v][u] = w;
+        createEdges(nbNodes, matrix, u, v, w);
     }
-    displayMatrix(nbNodes, matrix);
-    printf("\n\n\n\n", );
 
     fgets(buffer, BUFSIZE, file);
-    while(buffer[0] != 'S')
+    while(strcmp(buffer, "SECTION Tree Decomposition\n") != 0)
     {
         fgets(buffer, BUFSIZE, file);
     }
-    fgets(buffer, BUFSIZE, file);
-    if(buffer[0] == 'c')
+    if(fgetc(file) == 'c')
     {
         fgets(buffer, BUFSIZE, file);
     }
-    fseek(file, 5, SEEK_CUR);
-    fscanf(file, "%d %d", &nbBags, &treeWidth);
-    printf("%d %d\n", nbBags, treeWidth);
+    for(i = 0; i < 4; i++)
+    {
+        fgetc(file);
+    }
+    fscanf(file, "%d %d %d\n", &nbBags, &treeWidth, &nbNodes);
+    printf("%d %d %d\n", nbBags, treeWidth, nbNodes);
     fclose(file);
 
     return(0);
