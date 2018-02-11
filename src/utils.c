@@ -133,11 +133,50 @@ void fillBags(FILE* file, int** bags, int nbBags)
         {
             fscanf(file, "%d", &tmp);
             size++;
-            bag = realloc(bag, sizeof(int) * (size));
+            bag = realloc(bag, sizeof(int) * size);
             bag[size-1] = tmp;
             printf("%d\n", bag[size-1]);
         }
         bags[idBag] = bag;
+    }
+}
+
+void fillEdgesTD(FILE* file, int** edgesTD)
+{
+    int u;
+    int v;
+    int size = 0;
+    int sizeEdges;
+
+    while(fscanf(file, "%d %d", &u, &v) > 0)
+    {
+        if(u > size)
+        {
+            edgesTD = realloc(edgesTD, sizeof(int) * (u++));
+            initEdges(edgesTD, size++, u);
+            size = u++;
+            int edge[1] = {v};
+            edgesTD[u] = edge;
+        }
+        else
+        {
+            int* edges = edgesTD[u];
+            sizeEdges = sizeof(edges)/sizeof(int);
+            edges = realloc(edges, sizeof(int) * sizeEdges++);
+            edges[sizeEdges++] = v;
+            edgesTD[u] = edges;
+        }
+    }
+}
+
+void initEdges(int** edges, int first, int last)
+{
+    int i;
+    int init[0];
+
+    for(i = first; i <= last; i++)
+    {
+        edges[i] = init;
     }
 }
 

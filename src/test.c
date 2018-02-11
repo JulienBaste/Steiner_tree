@@ -8,15 +8,8 @@
 
 int main(int argc, char const *argv[])
 {
-    FILE* file = fopen(argv[1], "r");
-    if(file == NULL)
-    {
-        perror("fopen");
-    }
-
-    int v1;
-    int v2;
-    int res = fscanf(file, "%d %d", &v1, &v2);
-    printf("%d %d %d\n", res, v1, v2);
+    int test[0];
+    int test2[1];
+    printf("%d %d\n", sizeof(test)/sizeof(int), sizeof(test2)/sizeof(int));
     return 0;
 }
