@@ -10,7 +10,9 @@ void getNbEdges(FILE* file, int* nbEdges);
 void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes]);
 void fillBags(FILE* file, int** bags, int nbBags);
 void fillEdgesTD(FILE* file, int** edgesTD);
-void initEdges(int** edges, int first, int last);
+void initEdgesAtZero(int** edges, int first, int last);
+void copyArray(int* t1, int* t2);
+void printArray(int* t);
 
 typedef struct niceTD niceTD;
 struct niceTD

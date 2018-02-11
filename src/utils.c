@@ -135,7 +135,6 @@ void fillBags(FILE* file, int** bags, int nbBags)
             size++;
             bag = realloc(bag, sizeof(int) * size);
             bag[size-1] = tmp;
-            printf("%d\n", bag[size-1]);
         }
         bags[idBag] = bag;
     }
@@ -145,31 +144,20 @@ void fillEdgesTD(FILE* file, int** edgesTD)
 {
     int u;
     int v;
-    int size = 0;
     int sizeEdges;
 
     while(fscanf(file, "%d %d", &u, &v) > 0)
     {
-        if(u > size)
-        {
-            edgesTD = realloc(edgesTD, sizeof(int) * (u++));
-            initEdges(edgesTD, size++, u);
-            size = u++;
-            int edge[1] = {v};
-            edgesTD[u] = edge;
-        }
-        else
-        {
-            int* edges = edgesTD[u];
-            sizeEdges = sizeof(edges)/sizeof(int);
-            edges = realloc(edges, sizeof(int) * sizeEdges++);
-            edges[sizeEdges++] = v;
-            edgesTD[u] = edges;
-        }
+        sizeEdges = sizeof(edgesTD[u])/sizeof(int);
+        printf("%d\n", sizeEdges);
+        int* newEdge = malloc(sizeof(int) * (sizeEdges++));
+        copyArray(edgesTD[u], newEdge);
+        newEdge[sizeEdges++] = v;
+        edgesTD[u] = newEdge;
     }
 }
 
-void initEdges(int** edges, int first, int last)
+void initEdgesAtZero(int** edges, int first, int last)
 {
     int i;
     int init[0];
@@ -178,6 +166,30 @@ void initEdges(int** edges, int first, int last)
     {
         edges[i] = init;
     }
+}
+
+void copyArray(int* t1, int* t2)
+{
+    int size = sizeof(t1)/sizeof(int);
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        t2[i] = t1[i];
+    }
+}
+
+void printArray(int* t)
+{
+    int size = sizeof(t)/sizeof(t[0]);
+    printf("%d\n", size);
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        printf("%d ", t[i]);
+    }
+    printf("\n");
 }
 
 /*void combination(char n[], int k, int startPosition, char result[])
