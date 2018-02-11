@@ -8,8 +8,15 @@
 
 int main(int argc, char const *argv[])
 {
-    char *n = "01";
-    char result[3];
-    combination(n, 1, 0, result);
+    FILE* file = fopen(argv[1], "r");
+    if(file == NULL)
+    {
+        perror("fopen");
+    }
+
+    int v1;
+    int v2;
+    int res = fscanf(file, "%d %d", &v1, &v2);
+    printf("%d %d %d\n", res, v1, v2);
     return 0;
 }

@@ -116,7 +116,30 @@ void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes])
     }
 }
 
+void fillBags(FILE* file, int** bags, int nbBags)
+{
+    int i;
+    int tmp;
+    int idBag;
+    int size;
 
+    for(i = 0; i < nbBags; i++)
+    {
+        size = 0;
+        int* bag = malloc(sizeof(int) * size);
+        fgetc(file);
+        fscanf(file, "%d", &idBag);
+        while(fgetc(file) == ' ')
+        {
+            fscanf(file, "%d", &tmp);
+            size++;
+            bag = realloc(bag, sizeof(int) * (size));
+            bag[size-1] = tmp;
+            printf("%d\n", bag[size-1]);
+        }
+        bags[idBag] = bag;
+    }
+}
 
 /*void combination(char n[], int k, int startPosition, char result[])
 {

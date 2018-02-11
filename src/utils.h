@@ -8,6 +8,7 @@ int* createTerminals(int nbTerminals);
 void getNbNodes(FILE* file, int* nbNodes);
 void getNbEdges(FILE* file, int* nbEdges);
 void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes]);
+void fillBags(FILE* file, int** bags, int nbBags);
 
 typedef struct niceTD niceTD;
 struct niceTD
@@ -15,5 +16,5 @@ struct niceTD
     niceTD* filsGauche;
     niceTD* filsDroit;
     int type;
-    int bag[];
+    int* bag;
 };

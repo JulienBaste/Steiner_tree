@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
     getNbEdges(file, &nbEdges);
     int matrix[nbNodes][nbNodes];
     initMatrix(nbNodes, matrix);
-    fillMatrix(file, nbNodes, nbEdges, matrix);
+    fillMatrix(file, nbNodes, nbEdges, matrix);/* Bug a corriger sur nbEdges*/
 
     for(i = 0; i < 34; i++)
     {
@@ -53,13 +53,16 @@ int main(int argc, char const *argv[])
 
     fscanf(file, "%d", &nbBags);
 
-    printf("%d %d %d %d\n", nbNodes, nbEdges, nbTerminals, nbBags);
+    int* bags[nbBags];
+
+    for(i = 0; i < 7; i++)
+    {
+        fgetc(file);
+    }
+
+    fillBags(file, bags, nbBags);
+
     fclose(file);
 
     return 0;
 }
-
-/*//affichage de matrice
-//remplir la matrice avec des 0
-//existence d'un arrete
-//ajout et suppression d'arrete*/
