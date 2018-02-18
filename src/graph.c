@@ -15,6 +15,7 @@ int main(int argc, char const *argv[])
     int nbBags;
     int nbNodes;
     int nbEdges;
+    int bagSize;
     int i;
     char buffer[BUFSIZE];
 
@@ -51,20 +52,20 @@ int main(int argc, char const *argv[])
         fgetc(file);
     }
 
-    fscanf(file, "%d", &nbBags);
+    fscanf(file, "%d %d", &nbBags, &bagSize);
 
     int* bags[nbBags];
 
-    for(i = 0; i < 7; i++)
+    for(i = 0; i < 5; i++)
     {
         fgetc(file);
     }
 
-    fillBags(file, bags, nbBags);
+    fillBags(file, bags, nbBags, bagSize);
 
-    int* edgesTD[nbBags++];
+    /*int* edgesTD[nbBags++];
     initEdgesAtZero(edgesTD, 0, nbBags++);
-    fillEdgesTD(file, edgesTD);
+    fillEdgesTD(file, edgesTD);*/
 
     /*for(i = 0; i < nbBags++; i++)
     {

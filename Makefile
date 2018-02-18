@@ -1,6 +1,6 @@
 CC = gcc
 LDFLAGS =
-CFLAGS = -W -Wall -ansi -pedantic
+CFLAGS = -W -Wall -ansi -pedantic -g
 
 DIR = .
 BIN = $(DIR)/bin/

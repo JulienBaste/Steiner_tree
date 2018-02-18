@@ -18,6 +18,16 @@ void initMatrix(int size, int matrix[][size])
     }
 }
 
+void initArray(int size, int* array)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        array[i] = 0;
+    }
+}
+
 void displayMatrix(int size, int matrix[][size])
 {
     int i;
@@ -116,7 +126,7 @@ void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes])
     }
 }
 
-void fillBags(FILE* file, int** bags, int nbBags)
+void fillBags(FILE* file, int** bags, int nbBags, int bagSize)
 {
     int i;
     int tmp;
@@ -126,17 +136,18 @@ void fillBags(FILE* file, int** bags, int nbBags)
     for(i = 0; i < nbBags; i++)
     {
         size = 0;
-        int* bag = malloc(sizeof(int) * size);
+        int* bag = malloc(sizeof(int) * bagSize);
+        initArray(bagSize, bag);
         fgetc(file);
         fscanf(file, "%d", &idBag);
         while(fgetc(file) == ' ')
         {
             fscanf(file, "%d", &tmp);
+            bag[size] = tmp;
             size++;
-            bag = realloc(bag, sizeof(int) * size);
-            bag[size-1] = tmp;
         }
         bags[idBag] = bag;
+        printArray(bagSize, bags[idBag]);
     }
 }
 
@@ -149,6 +160,7 @@ void fillEdgesTD(FILE* file, int** edgesTD)
     while(fscanf(file, "%d %d", &u, &v) > 0)
     {
         sizeEdges = sizeof(edgesTD[u])/sizeof(int);
+        printf("%d\n", *edgesTD[u]);
         printf("%d\n", sizeEdges);
         int* newEdge = malloc(sizeof(int) * (sizeEdges++));
         copyArray(edgesTD[u], newEdge);
@@ -160,17 +172,15 @@ void fillEdgesTD(FILE* file, int** edgesTD)
 void initEdgesAtZero(int** edges, int first, int last)
 {
     int i;
-    int init[0];
 
     for(i = first; i <= last; i++)
     {
-        edges[i] = init;
+        edges[i] = malloc(sizeof(int) * 0);
     }
 }
 
-void copyArray(int* t1, int* t2)
+void copyArray(int size, int* t1, int* t2)
 {
-    int size = sizeof(t1)/sizeof(int);
     int i;
 
     for(i = 0; i < size; i++)
@@ -179,10 +189,8 @@ void copyArray(int* t1, int* t2)
     }
 }
 
-void printArray(int* t)
+void printArray(int size, int* t)
 {
-    int size = sizeof(t)/sizeof(t[0]);
-    printf("%d\n", size);
     int i;
 
     for(i = 0; i < size; i++)
@@ -191,6 +199,41 @@ void printArray(int* t)
     }
     printf("\n");
 }
+
+/*void cmpBag(int* b1, int* b2)
+{
+
+}
+
+void memCopy(int destination[],const int source[],int n)
+{
+ for(int i=0;i<n;i++)
+  destination[i]=source[i];
+}
+
+//depart,milieu et fin seront des indice de tableau
+void fusion(int T[],int depart,int milieu,int fin)
+{
+    int cur1=depart,cur2=milieu,curTab=0;
+    int tab[fin-depart+1];
+    while(cur1 < milieu && cur2 <= fin)
+    {
+        if(T[cur1]<=T[cur2])
+            tab[curTab]=T[cur1++];
+        else
+            ab[curTab]=T[cur2++];
+        curTab++;
+    }
+    memCopy(&tab[curTab],&T[cur1],milieu-cur1);//on recopie le restant de la permière partie
+    memCopy(&tab[curTab],&T[cur2],fin-cur2+1);//et de la deuxièpe partie
+
+    memCopy(&T[depart],tab,fin-depart+1);//on met tout dans le tableau,fusion terminé !
+}*/
+
+/*void buildNiceTD(niceTD niceTD, int** bags, int** edges, int next)
+{
+    int* bag = bags[next];
+}*/
 
 /*void combination(char n[], int k, int startPosition, char result[])
 {
