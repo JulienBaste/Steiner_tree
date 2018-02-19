@@ -147,26 +147,48 @@ void fillBags(FILE* file, int** bags, int nbBags, int bagSize)
             size++;
         }
         bags[idBag] = bag;
-        printArray(bagSize, bags[idBag]);
     }
 }
 
-void fillEdgesTD(FILE* file, int** edgesTD)
+int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges)
 {
     int u;
     int v;
-    int sizeEdges;
+    int index;
 
     while(fscanf(file, "%d %d", &u, &v) > 0)
     {
-        sizeEdges = sizeof(edgesTD[u])/sizeof(int);
-        printf("%d\n", *edgesTD[u]);
-        printf("%d\n", sizeEdges);
-        int* newEdge = malloc(sizeof(int) * (sizeEdges++));
-        copyArray(edgesTD[u], newEdge);
-        newEdge[sizeEdges++] = v;
-        edgesTD[u] = newEdge;
+        index = nextZero(maxEdges, edgesTD[u]);
+        if(index == -1)
+        {
+            maxEdges = maxEdges * 2;
+            int* newEdge = malloc(sizeof(int) * maxEdges);
+            initArray(maxEdges, newEdge);
+            copyArray(maxEdges/2, edgesTD[u], newEdge);
+            newEdge[(maxEdges/2)] = v;
+            edgesTD[u] = newEdge;
+        }
+        else
+        {
+            edgesTD[u][index] = v;
+        }
+        printf("%d : ", u);
+        printArray(maxEdges, edgesTD[u]);
     }
+
+    return maxEdges;
+}
+
+int nextZero(int size, int* array)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(array[i] == 0) return i;
+    }
+
+    return -1;
 }
 
 void initEdgesAtZero(int** edges, int first, int last)
@@ -175,7 +197,8 @@ void initEdgesAtZero(int** edges, int first, int last)
 
     for(i = first; i <= last; i++)
     {
-        edges[i] = malloc(sizeof(int) * 0);
+        edges[i] = malloc(sizeof(int) * 1);
+        initArray(1, edges[i]);
     }
 }
 

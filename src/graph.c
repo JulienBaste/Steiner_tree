@@ -11,6 +11,7 @@
 
 int main(int argc, char const *argv[])
 {
+    int maxEdges = 1;
     int nbTerminals;
     int nbBags;
     int nbNodes;
@@ -63,13 +64,13 @@ int main(int argc, char const *argv[])
 
     fillBags(file, bags, nbBags, bagSize);
 
-    /*int* edgesTD[nbBags++];
+    int* edgesTD[nbBags++];
     initEdgesAtZero(edgesTD, 0, nbBags++);
-    fillEdgesTD(file, edgesTD);*/
+    maxEdges = fillEdgesTD(file, edgesTD, maxEdges);
 
     /*for(i = 0; i < nbBags++; i++)
     {
-        printArray(edgesTD[i]);
+        printArray(maxEdges, edgesTD[i]);
     }*/
 
     fclose(file);
