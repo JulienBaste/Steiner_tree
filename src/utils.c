@@ -150,8 +150,9 @@ void fillBags(FILE* file, int** bags, int nbBags, int bagSize)
     }
 }
 
-int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges)
+int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
 {
+    int i;
     int u;
     int v;
     int index;
@@ -162,11 +163,17 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges)
         if(index == -1)
         {
             maxEdges = maxEdges * 2;
-            int* newEdge = malloc(sizeof(int) * maxEdges);
-            initArray(maxEdges, newEdge);
-            copyArray(maxEdges/2, edgesTD[u], newEdge);
-            newEdge[(maxEdges/2)] = v;
-            edgesTD[u] = newEdge;
+            for(i = 0; i < nbEdge; i++)
+            {
+                int* newEdge = malloc(sizeof(int) * maxEdges);
+                initArray(maxEdges, newEdge);
+                copyArray(maxEdges/2, edgesTD[i], newEdge);
+                if(i == u)
+                {
+                    newEdge[(maxEdges/2)] = v;
+                }
+                edgesTD[i] = newEdge;
+            }
         }
         else
         {
@@ -244,7 +251,7 @@ void fusion(int T[],int depart,int milieu,int fin)
         if(T[cur1]<=T[cur2])
             tab[curTab]=T[cur1++];
         else
-            ab[curTab]=T[cur2++];
+            tab[curTab]=T[cur2++];
         curTab++;
     }
     memCopy(&tab[curTab],&T[cur1],milieu-cur1);//on recopie le restant de la permière partie

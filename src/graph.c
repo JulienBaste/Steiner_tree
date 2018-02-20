@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 
     int* edgesTD[nbBags++];
     initEdgesAtZero(edgesTD, 0, nbBags++);
-    maxEdges = fillEdgesTD(file, edgesTD, maxEdges);
+    maxEdges = fillEdgesTD(file, edgesTD, maxEdges, nbBags++);
 
     /*for(i = 0; i < nbBags++; i++)
     {
