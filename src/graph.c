@@ -18,6 +18,7 @@ int main(int argc, char const *argv[])
     int nbEdges;
     int bagSize;
     int i;
+    int j;
     char buffer[BUFSIZE];
 
     FILE* file = fopen(argv[1], "r");
@@ -30,13 +31,14 @@ int main(int argc, char const *argv[])
     getNbEdges(file, &nbEdges);
     int matrix[nbNodes][nbNodes];
     initMatrix(nbNodes, matrix);
-    fillMatrix(file, nbNodes, nbEdges, matrix);/* Bug a corriger sur nbEdges*/
 
     for(i = 0; i < 34; i++)
     {
         fgetc(file);
     }
+
     fscanf(file, "%d", &nbTerminals);
+
 
     while(strcmp(buffer, "SECTION Tree Decomposition\n") != 0)
     {
@@ -57,21 +59,25 @@ int main(int argc, char const *argv[])
 
     int* bags[nbBags];
 
-    for(i = 0; i < 5; i++)
+    for(i = 0; i < 4; i++)
     {
         fgetc(file);
     }
 
     fillBags(file, bags, nbBags, bagSize);
 
-    int* edgesTD[nbBags++];
-    initEdgesAtZero(edgesTD, 0, nbBags++);
-    maxEdges = fillEdgesTD(file, edgesTD, maxEdges, nbBags++);
+    int* edgesTD[nbBags + 1];
+    initEdgesAtZero(edgesTD, 0, nbBags + 1);
+    maxEdges = fillEdgesTD(file, edgesTD, maxEdges, nbBags + 1);
 
-    /*for(i = 0; i < nbBags++; i++)
-    {
-        printArray(maxEdges, edgesTD[i]);
-    }*/
+    int* res = findFirstTerminal(bags, edgesTD, nbBags, maxEdges, nbTerminals, 1);
+
+    /*niceTD root;
+    root.bag = malloc(sizeof(int) * bagSize);
+    initArray(bagSize, root.bag);
+    root.bag[0] = bags[res[0]][res[1]];
+
+    buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0]);*/
 
     fclose(file);
 

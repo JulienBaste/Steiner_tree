@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include "utils.h"
 
 void initMatrix(int size, int matrix[][size])
 {
@@ -179,8 +180,6 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
         {
             edgesTD[u][index] = v;
         }
-        printf("%d : ", u);
-        printArray(maxEdges, edgesTD[u]);
     }
 
     return maxEdges;
@@ -230,40 +229,45 @@ void printArray(int size, int* t)
     printf("\n");
 }
 
-/*void cmpBag(int* b1, int* b2)
-{
-
-}
-
-void memCopy(int destination[],const int source[],int n)
-{
- for(int i=0;i<n;i++)
-  destination[i]=source[i];
-}
-
-//depart,milieu et fin seront des indice de tableau
-void fusion(int T[],int depart,int milieu,int fin)
-{
-    int cur1=depart,cur2=milieu,curTab=0;
-    int tab[fin-depart+1];
-    while(cur1 < milieu && cur2 <= fin)
-    {
-        if(T[cur1]<=T[cur2])
-            tab[curTab]=T[cur1++];
-        else
-            tab[curTab]=T[cur2++];
-        curTab++;
-    }
-    memCopy(&tab[curTab],&T[cur1],milieu-cur1);//on recopie le restant de la permière partie
-    memCopy(&tab[curTab],&T[cur2],fin-cur2+1);//et de la deuxièpe partie
-
-    memCopy(&T[depart],tab,fin-depart+1);//on met tout dans le tableau,fusion terminé !
-}*/
-
-/*void buildNiceTD(niceTD niceTD, int** bags, int** edges, int next)
+void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next)
 {
     int* bag = bags[next];
-}*/
+}
+
+int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int next)
+{
+    int i;
+    int* bag = bags[next];
+
+    for(i = 0; i < bagSize; i++)
+    {
+        if(bag[i] == 0) break;
+        if(bag[i] <= nbTerminals)
+        {
+            int* res = malloc(sizeof(int) * 2);
+            res[0] = next;
+            res[1] = i;
+            return res;
+        }
+    }
+
+    int newNext = edges[next][0];
+    int* newEdge = malloc(sizeof(int) * maxEdges);
+    initArray(maxEdges, newEdge);
+    copyArray(maxEdges-1, &(edges[next][1]), newEdge);
+    edges[next] = newEdge;
+
+    return findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, newNext);
+}
+
+int** cmpBag(int size, int* b1, int* b2)
+{
+    int* introduce = malloc(sizeof(int) * size);
+    int* forget = malloc(sizeof(int) * size);
+
+    initArray(size, introduce);
+    initArray(size, forget);
+}
 
 /*void combination(char n[], int k, int startPosition, char result[])
 {
