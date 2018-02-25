@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     int tab[]={9,8,7,0,6,5,4,0,3,2,1,0};
     int* res = malloc(sizeof(int) * 12);
     res = triFusion(12, tab);
-    printArray(12, res);
+    printf("%d\n", dichotomie(15, 12, 0, res));
     /*int* res = malloc(sizeof(int) * 1);
     res[0] = 0;
     if(res[0] == NULL)

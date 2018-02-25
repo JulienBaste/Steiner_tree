@@ -41,8 +41,7 @@ int main(int argc, char const *argv[])
     fscanf(file, "%d", &nbTerminals);
     terminals = malloc(sizeof(int) * nbTerminals);
     fillTerminals(file, terminals, nbTerminals);
-    displayMatrix(nbNodes, matrix);
-    printArray(nbTerminals, terminals);
+    terminals = triFusion(terminals);
 
     while(strcmp(buffer, "SECTION Tree Decomposition\n") != 0)
     {
@@ -70,11 +69,21 @@ int main(int argc, char const *argv[])
 
     fillBags(file, bags, nbBags, bagSize);
 
+    for(i = 1; i < nbBags; i++)
+    {
+        bags[i] = triFusion(bagSize, bags[i]);
+    }
+
     int* edgesTD[nbBags + 1];
     initEdgesAtZero(edgesTD, 0, nbBags + 1);
     maxEdges = fillEdgesTD(file, edgesTD, maxEdges, nbBags + 1);
 
-    int* res = findFirstTerminal(bags, edgesTD, nbBags, maxEdges, nbTerminals, 1);
+    for(i = 1; i < nbBags + 1)
+    {
+        edgesTD[i] = triFusion(maxEdges, edgesTD[i]);
+    }
+
+    int* res = findFirstTerminal(bags, edgesTD, nbBags, maxEdges, nbTerminals, terminals, 1);
 
     /*niceTD root;
     root.bag = malloc(sizeof(int) * bagSize);

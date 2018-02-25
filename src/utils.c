@@ -191,6 +191,8 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
         {
             edgesTD[u][index] = v;
         }
+        index = nextZero(maxEdges, edgesTD[v]);
+        edgesTD[v][index] = u;
     }
 
     return maxEdges;
@@ -245,7 +247,7 @@ void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, 
     int* bag = bags[next];
 }
 
-int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int next)
+int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int* terminals, int next)
 {
     int i;
     int* bag = bags[next];
@@ -268,7 +270,7 @@ int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int n
     copyArray(maxEdges-1, &(edges[next][1]), newEdge);
     edges[next] = newEdge;
 
-    return findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, newNext);
+    return findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, terminals, newNext);
 }
 
 int* put(int e, int size, int* tab)
@@ -308,5 +310,28 @@ int* fusion(int sizeT1, int sizeT2, int* t1, int* t2)
     else
     {
         return put(t2[0], sizeT1+sizeT2, fusion(sizeT1, sizeT2-1, t1, &t2[1]));
+    }
+}
+
+int dichotomie(int e, int size, int res, int* tab)
+{
+    if(size == 1)
+    {
+        if(tab[0] == e) return res;
+        return -1;
+    }
+    int i = size/2;
+    if(tab[i] == e) return res+i;
+    if(tab[i] > e || tab[i] == 0)
+    {
+        int* tmp = malloc(sizeof(int) * i);
+        copyArray(i, tab, tmp);
+        return dichotomie(e, i, res, tmp);
+    }
+    else
+    {
+        int* tmp = malloc(sizeof(int) * i+size%2);
+        copyArray(i+size%2, &tab[i], tmp);
+        return dichotomie(e, i+size%2, res+i, tmp);
     }
 }
