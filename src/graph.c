@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
     int nbEdges;
     int bagSize;
     int i;
-    int j;
+    int* terminals;
     char buffer[BUFSIZE];
 
     FILE* file = fopen(argv[1], "r");
@@ -31,6 +31,7 @@ int main(int argc, char const *argv[])
     getNbEdges(file, &nbEdges);
     int matrix[nbNodes][nbNodes];
     initMatrix(nbNodes, matrix);
+    fillMatrix(file, nbNodes, nbEdges, matrix);
 
     for(i = 0; i < 34; i++)
     {
@@ -38,7 +39,10 @@ int main(int argc, char const *argv[])
     }
 
     fscanf(file, "%d", &nbTerminals);
-
+    terminals = malloc(sizeof(int) * nbTerminals);
+    fillTerminals(file, terminals, nbTerminals);
+    displayMatrix(nbNodes, matrix);
+    printArray(nbTerminals, terminals);
 
     while(strcmp(buffer, "SECTION Tree Decomposition\n") != 0)
     {

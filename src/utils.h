@@ -24,6 +24,7 @@ int* createTerminals(int nbTerminals);
 void getNbNodes(FILE* file, int* nbNodes);
 void getNbEdges(FILE* file, int* nbEdges);
 void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes]);
+void fillTerminals(FILE* file, int* terminals, int nbTerminals);
 void fillBags(FILE* file, int** bags, int nbBags, int bagSize);
 int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge);
 void initEdgesAtZero(int** edges, int first, int last);

@@ -127,6 +127,17 @@ void fillMatrix(FILE* file, int nbNodes, int nbEdges, int matrix[][nbNodes])
     }
 }
 
+void fillTerminals(FILE* file, int* terminals, int nbTerminals)
+{
+    int i;
+
+    for(i = 0; i < nbTerminals; i++)
+    {
+        fseek(file, 3, SEEK_CUR);
+        fscanf(file, "%d", &terminals[i]);
+    }
+}
+
 void fillBags(FILE* file, int** bags, int nbBags, int bagSize)
 {
     int i;
