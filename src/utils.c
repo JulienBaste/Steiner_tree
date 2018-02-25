@@ -247,30 +247,47 @@ void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, 
     int* bag = bags[next];
 }
 
-int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int* terminals, int next)
+int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int* terminals, int* parcouru, int next)
 {
     int i;
     int* bag = bags[next];
+    int* res = malloc(sizeof(int) * 2);
+    int* tmp = malloc(sizeof(int) * 2);
 
     for(i = 0; i < bagSize; i++)
     {
         if(bag[i] == 0) break;
-        if(bag[i] <= nbTerminals)
+        if(dichotomie(bag[i], nbTerminals, 0, terminals) != -1)
         {
-            int* res = malloc(sizeof(int) * 2);
+            res = malloc(sizeof(int) * 2);
             res[0] = next;
             res[1] = i;
             return res;
         }
     }
 
-    int newNext = edges[next][0];
-    int* newEdge = malloc(sizeof(int) * maxEdges);
-    initArray(maxEdges, newEdge);
-    copyArray(maxEdges-1, &(edges[next][1]), newEdge);
-    edges[next] = newEdge;
+    int* fils = edges[next];
+    parcouru[next] = 1;
+    res[0] = maxEdges;
+    res[1] = bagSize;
 
-    return findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, terminals, newNext);
+    for(i = 0; i < maxEdges; i++)
+    {
+        if(fils[i] != 0 && parcouru[fils[i]] == 0)
+        {
+            tmp = findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, terminals, parcouru, fils[i]);
+            if(tmp[0] < res[0])
+            {
+                res = tmp;
+            }
+            else if(tmp[0] == res[0] && tmp[1] < res[1])
+            {
+                res = tmp;
+            }
+        }
+    }
+
+    return res;
 }
 
 int* put(int e, int size, int* tab)
