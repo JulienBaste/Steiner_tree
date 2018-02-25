@@ -242,7 +242,7 @@ void printArray(int size, int* t)
     printf("\n");
 }
 
-void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next)
+void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next, int* parcouru)
 {
     int* bag = bags[next];
 }
@@ -351,4 +351,44 @@ int dichotomie(int e, int size, int res, int* tab)
         copyArray(i+size%2, &tab[i], tmp);
         return dichotomie(e, i+size%2, res+i, tmp);
     }
+}
+
+int** cmpBags(int bagSize, int* b1, int* b2)
+{
+    int i;
+    int indexI = 0;
+    int indexF = 0;
+    int** res = malloc(sizeof(int) * 2);
+    int* introduce = malloc(sizeof(int) * bagSize);
+    int* forget = malloc(sizeof(int) * bagSize);
+    int* parcouru = malloc(sizeof(int) * bagSize);
+
+    initArray(bagSize, introduce);
+    initArray(bagSize, forget);
+    initArray(bagSize, parcouru);
+
+    for(i = 0; i < bagSize; i++)
+    {
+        if(dichotomie(b1[i], bagSize, 0, b2) != -1)
+        {
+            parcouru[b1[i]] = 1;
+        }
+        else
+        {
+            introduce[indexI] = b1[i];
+            indexI++;
+        }
+    }
+
+    for(i = 0; i < bagSize; i++)
+    {
+        if(parcouru[b2[i]] == 1) continue;
+        forget[indexF] = b2[i];
+        indexF++;
+    }
+
+    res[0] = introduce;
+    res[1] = forget;
+
+    return res;
 }

@@ -88,13 +88,13 @@ int main(int argc, char const *argv[])
 
     int* res = findFirstTerminal(bags, edgesTD, nbBags, maxEdges, nbTerminals, terminals, parcouru, 1);
 
-    niceTD root;
+    /*niceTD root;
     root.bag = malloc(sizeof(int) * bagSize);
     initArray(bagSize, root.bag);
     initArray(parcouru);
     root.bag[0] = bags[res[0]][res[1]];
 
-    buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0], parcouru);
+    buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0], parcouru);*/
 
     fclose(file);
 
