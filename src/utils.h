@@ -32,3 +32,6 @@ void copyArray(int size, int* t1, int* t2);
 void printArray(int size, int* t);
 void buildNiceTD(niceTD tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next);
 int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int next);
+int* put(int e, int size, int* tab);
+int* triFusion(int size, int* tab);
+int* fusion(int sizeT1, int sizeT2, int* t1, int* t2);

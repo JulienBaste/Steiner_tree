@@ -8,8 +8,19 @@
 
 int main(int argc, char const *argv[])
 {
-    int tab[]={1,3,7,8,9,2,3,4,5,0,0};
-    fusion(tab,0,5,10);
-    printArray(11, tab);
-    return 0;
+    int tab[]={9,8,7,0,6,5,4,0,3,2,1,0};
+    int* res = malloc(sizeof(int) * 12);
+    res = triFusion(12, tab);
+    printArray(12, res);
+    /*int* res = malloc(sizeof(int) * 1);
+    res[0] = 0;
+    if(res[0] == NULL)
+    {
+        printf("coucou\n");
+    }
+    else
+    {
+        printf("ocu\n");
+    }
+    return 0;*/
 }

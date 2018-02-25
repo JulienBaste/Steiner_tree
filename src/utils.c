@@ -271,41 +271,42 @@ int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int n
     return findFirstTerminal(bags, edges, bagSize, maxEdges, nbTerminals, newNext);
 }
 
-int** cmpBag(int size, int* b1, int* b2)
+int* put(int e, int size, int* tab)
 {
-    int* introduce = malloc(sizeof(int) * size);
-    int* forget = malloc(sizeof(int) * size);
+    int i;
+    int* res = malloc(sizeof(int) * size+1);
 
-    initArray(size, introduce);
-    initArray(size, forget);
+    res[0] = e;
+    for(i = 1; i <= size; i++)
+    {
+        res[i] = tab[i-1];
+    }
+
+    return res;
 }
 
-/*void combination(char n[], int k, int startPosition, char result[])
+int* triFusion(int size, int* tab)
 {
-    printf("%s\n", n);
-    int i;
-    int tmp = strlen(n) - k;
-    printf("%s\n", result);
-    if(k == 0)
+    if(size <= 1) return tab;
+    else
     {
-        printf("%s\n", result);
-    }
-    for(i = startPosition; i <= tmp; i++)
-    {
-        printf("%d %d\n", i, tmp);
-        printf("%c\n", n[i]);
-        result[startPosition] = n[i];
-        printf("resultTMP : %c\n", result[tmp]);
-        printf("result : %s\n", result);
-        combination(n, k-1, i+1, result);
+        int newSize = size/2;
+        int* tmp = malloc(sizeof(int) * (newSize));
+        copyArray(newSize, tab, tmp);
+        return fusion(newSize, newSize+size%2, triFusion(newSize, tmp), triFusion(newSize+size%2, &tab[newSize]));
     }
 }
 
-int* steiner(int size, int matrix[][size], int nbTerminals, int terminals)
+int* fusion(int sizeT1, int sizeT2, int* t1, int* t2)
 {
-    int i;
-    for(i = 0; i < nbTerminals; i++)
+    if(sizeT1 == 0) return t2;
+    if(sizeT2 == 0) return t1;
+    if((t1[0] <= t2[0] && t1[0] != 0) || t2[0] == 0)
     {
-
+        return put(t1[0], sizeT1+sizeT2, fusion(sizeT1-1, sizeT2, &t1[1], t2));
     }
-}*/
+    else
+    {
+        return put(t2[0], sizeT1+sizeT2, fusion(sizeT1, sizeT2-1, t1, &t2[1]));
+    }
+}
