@@ -83,19 +83,17 @@ int main(int argc, char const *argv[])
         edgesTD[i] = triFusion(maxEdges, edgesTD[i]);
     }
 
-    int* parcouru = malloc(sizeof(int) * (nbBags+1));
-    initArray(nbBags, parcouru);
+    int* parcouru = malloc(sizeof(int) * (nbBags+2));
+    initArray(nbBags+2, parcouru);
 
     int* res = findFirstTerminal(bags, edgesTD, nbBags, maxEdges, nbTerminals, terminals, parcouru, 1);
 
-    /*niceTD root;
-    root.bag = malloc(sizeof(int) * bagSize);
-    initArray(bagSize, root.bag);
-    initArray(parcouru);
-    root.bag[0] = bags[res[0]][res[1]];
+    niceTD* root = constructor(2, bagSize);
+    initArray(bagSize, root->bag);
+    initArray(nbBags+2, parcouru);
+    root->bag[0] = bags[res[0]][res[1]];
 
-    buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0], parcouru);*/
-
+    buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0], parcouru);
     fclose(file);
 
     return 0;
