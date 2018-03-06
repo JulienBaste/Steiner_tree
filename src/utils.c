@@ -253,19 +253,15 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     int** newNode = cmpBags(bagSize, tree->bag, bag);
     niceTD* tmp = tree;
 
-    /*printf("next : %d\n", next);
-    printArray(bagSize, newNode[0]);
-    printArray(bagSize, newNode[1]);
-    printf("\n");*/
-
     for(i = 0; i < bagSize; i++)
     {
         if(newNode[0][i] == 0) break;
-        niceTD* son = constructor(1, bagSize);
+        niceTD* son = constructor(2, bagSize);
         copyArray(bagSize, tmp->bag, son->bag);
         index = dichotomie(newNode[0][i], bagSize, 0, son->bag);
         son->bag[index] = 0;
         son->bag = triFusion(bagSize, son->bag);
+        tmp->type = 1;
         tmp->left = son;
         tmp = son;
     }
@@ -273,22 +269,18 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     for(i = 0; i < bagSize; i++)
     {
         if(newNode[1][i] == 0) break;
-        niceTD* son = constructor(2, bagSize);
+        niceTD* son = constructor(1, bagSize);
         copyArray(bagSize, tmp->bag, son->bag);
         index = nextZero(bagSize, son->bag);
         son->bag[index] = newNode[1][i];
         son->bag = triFusion(bagSize, son->bag);
+        tmp->type = 2;
         tmp->left = son;
         tmp = son;
     }
 
     parcouru[next] = 1;
     toGo = toVisit(maxEdges, nbBags+1, fils, parcouru);
-
-    printf("parcouru : \n");
-    printArray(maxEdges+2, parcouru);
-    printf("to go : ");
-    printArray(maxEdges, toGo);
 
     while(toGo[0] > 2)
     {
@@ -298,7 +290,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         copyArray(bagSize, tmp->bag, rightSon->bag);
         tmp->left = leftSon;
         tmp->right = rightSon;
-        tmp->type = 2;
+        tmp->type = 3;
 
         index = nextZero(maxEdges+1, toGo);
         newNext = toGo[index-1];
@@ -317,14 +309,14 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     if(toGo[0] == 1)
     {
         index = nextZero(bagSize, tmp->bag);
-        while(index > 0)
+        while(index > 1)
         {
             niceTD* son = constructor(1, bagSize);
             copyArray(bagSize, tmp->bag, son->bag);
-            index = nextZero(bagSize, son->bag);
             son->bag[index-1] = 0;
             tmp->left = son;
             tmp = son;
+            index = nextZero(bagSize, tmp->bag);
         }
         niceTD* end = constructor(0, NULL);
         tmp->left = end;
@@ -508,4 +500,19 @@ niceTD* constructor(int type, int size)
     res->type = type;
 
     return res;
+}
+
+
+void print_ntd (niceTD* plop)
+{
+
+    if (plop==NULL)
+    return;
+    printf("type: %d  ----- ",plop->type);
+    printArray(4,plop->bag);
+
+    printf("Left\n");
+    print_ntd(plop->left);
+    printf("Right\n");
+    print_ntd(plop->right);
 }

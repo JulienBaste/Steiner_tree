@@ -40,3 +40,4 @@ int* fusion(int sizeT1, int sizeT2, int* t1, int* t2);
 int dichotomie(int e, int size, int res, int* tab);
 int** cmpBags(int bagSize, int* b1, int* b2);
 niceTD* constructor(int type, int size);
+void print_ntd (niceTD* plop);
