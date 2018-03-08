@@ -94,7 +94,7 @@ int main(int argc, char const *argv[])
     root->bag[0] = bags[res[0]][res[1]];
 
     buildNiceTD(root, bags, edgesTD, nbBags, bagSize, maxEdges, res[0], parcouru);
-    print_ntd(root);
+    print_ntd(root, bagSize);
     fclose(file);
 
     return 0;

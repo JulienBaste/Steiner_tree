@@ -503,16 +503,16 @@ niceTD* constructor(int type, int size)
 }
 
 
-void print_ntd (niceTD* plop)
+void print_ntd (niceTD* plop, int bagSize)
 {
 
     if (plop==NULL)
     return;
     printf("type: %d  ----- ",plop->type);
-    printArray(4,plop->bag);
+    printArray(bagSize,plop->bag);
 
     printf("Left\n");
-    print_ntd(plop->left);
+    print_ntd(plop->left, bagSize);
     printf("Right\n");
-    print_ntd(plop->right);
+    print_ntd(plop->right, bagSize);
 }
