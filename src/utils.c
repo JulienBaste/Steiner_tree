@@ -244,39 +244,47 @@ void printArray(int size, int* t)
 
 void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next, int* parcouru)
 {
+    niceTD* tmp = tree;
     int i;
     int index;
     int newNext;
     int* toGo;
     int* bag = bags[next];
     int* fils = edges[next];
-    int** newNode = cmpBags(bagSize, tree->bag, bag);
-    niceTD* tmp = tree;
-
-    for(i = 0; i < bagSize; i++)
+    int* tmp2;
+    if(nextZero(bagSize, bag) != 0)
     {
-        if(newNode[0][i] == 0) break;
-        niceTD* son = constructor(2, bagSize);
-        copyArray(bagSize, tmp->bag, son->bag);
-        index = dichotomie(newNode[0][i], bagSize, 0, son->bag);
-        son->bag[index] = 0;
-        son->bag = triFusion(bagSize, son->bag);
-        tmp->type = 1;
-        tmp->left = son;
-        tmp = son;
-    }
+        int** newNode = cmpBags(bagSize, tree->bag, bag);
 
-    for(i = 0; i < bagSize; i++)
-    {
-        if(newNode[1][i] == 0) break;
-        niceTD* son = constructor(1, bagSize);
-        copyArray(bagSize, tmp->bag, son->bag);
-        index = nextZero(bagSize, son->bag);
-        son->bag[index] = newNode[1][i];
-        son->bag = triFusion(bagSize, son->bag);
-        tmp->type = 2;
-        tmp->left = son;
-        tmp = son;
+        for(i = 0; i < bagSize; i++)
+        {
+            if(newNode[0][i] == 0) break;
+            niceTD* son = constructor(2, bagSize);
+            copyArray(bagSize, tmp->bag, son->bag);
+            index = dichotomie(newNode[0][i], bagSize, 0, son->bag);
+            son->bag[index] = 0;
+            tmp2 = triFusion(bagSize, son->bag);
+            free(son->bag);
+            son->bag = tmp2;
+            tmp->type = 1;
+            tmp->left = son;
+            tmp = son;
+        }
+
+        for(i = 0; i < bagSize; i++)
+        {
+            if(newNode[1][i] == 0) break;
+            niceTD* son = constructor(1, bagSize);
+            copyArray(bagSize, tmp->bag, son->bag);
+            index = nextZero(bagSize, son->bag);
+            son->bag[index] = newNode[1][i];
+            tmp2 = triFusion(bagSize, son->bag);
+            free(son->bag);
+            son->bag = tmp2;
+            tmp->type = 2;
+            tmp->left = son;
+            tmp = son;
+        }
     }
 
     parcouru[next] = 1;
@@ -321,6 +329,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         niceTD* end = constructor(0, NULL);
         tmp->left = end;
     }
+    free(toGo);
 }
 
 int* toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru)
@@ -385,13 +394,15 @@ int* findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int n
         }
     }
 
+    free(tmp);
+
     return res;
 }
 
 int* put(int e, int size, int* tab)
 {
     int i;
-    int* res = malloc(sizeof(int) * size+1);
+    int* res = malloc(sizeof(int) * size);
 
     res[0] = e;
     for(i = 1; i <= size; i++)

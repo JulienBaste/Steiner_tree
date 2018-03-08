@@ -19,7 +19,8 @@ int main(int argc, char const *argv[])
     int bagSize;
     int i;
     int* terminals;
-    char buffer[BUFSIZE];
+    int* tmp;
+    char buffer[BUFSIZE] = "";
 
     FILE* file = fopen(argv[1], "r");
     if(file == NULL)
@@ -71,7 +72,9 @@ int main(int argc, char const *argv[])
 
     for(i = 1; i < nbBags; i++)
     {
-        bags[i] = triFusion(bagSize, bags[i]);
+        tmp = triFusion(bagSize, bags[i]);
+        free(bags[i]);
+        bags[i] = tmp;
     }
 
     int* edgesTD[nbBags + 1];
@@ -80,7 +83,9 @@ int main(int argc, char const *argv[])
 
     for(i = 1; i < nbBags + 1; i++)
     {
-        edgesTD[i] = triFusion(maxEdges, edgesTD[i]);
+        tmp = triFusion(maxEdges, edgesTD[i]);
+        free(edgesTD[i]);
+        edgesTD[i] = tmp;
     }
 
     int* parcouru = malloc(sizeof(int) * (nbBags+2));
