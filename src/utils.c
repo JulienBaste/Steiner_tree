@@ -285,6 +285,10 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
             tmp->left = son;
             tmp = son;
         }
+
+        free(newNode[0]);
+        free(newNode[1]);
+        free(newNode);
     }
 
     parcouru[next] = 1;
@@ -326,7 +330,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
             tmp = son;
             index = nextZero(bagSize, tmp->bag);
         }
-        niceTD* end = constructor(0, NULL);
+        niceTD* end = constructor(0, bagSize);
         tmp->left = end;
     }
     free(toGo);
@@ -427,15 +431,18 @@ int* triFusion(int size, int* tab)
 
 int* fusion(int sizeT1, int sizeT2, int* t1, int* t2)
 {
+    int* tmp;
     if(sizeT1 == 0) return t2;
     if(sizeT2 == 0) return t1;
     if((t1[0] <= t2[0] && t1[0] != 0) || t2[0] == 0)
     {
-        return put(t1[0], sizeT1+sizeT2, fusion(sizeT1-1, sizeT2, &t1[1], t2));
+        tmp = fusion(sizeT1-1, sizeT2, &t1[1], t2);
+        return put(t1[0], sizeT1+sizeT2, tmp);
     }
     else
     {
-        return put(t2[0], sizeT1+sizeT2, fusion(sizeT1, sizeT2-1, t1, &t2[1]));
+        tmp = fusion(sizeT1, sizeT2-1, t1, &t2[1]);
+        return put(t2[0], sizeT1+sizeT2, tmp);
     }
 }
 
@@ -499,6 +506,8 @@ int** cmpBags(int bagSize, int* b1, int* b2)
     res[0] = introduce;
     res[1] = forget;
 
+    free(parcouru);
+
     return res;
 }
 
@@ -508,13 +517,13 @@ niceTD* constructor(int type, int size)
     res->left = NULL;
     res->right = NULL;
     res->bag = malloc(sizeof(int) * size);
+    initArray(size, res->bag);
     res->type = type;
 
     return res;
 }
 
-
-void print_ntd (niceTD* plop, int bagSize)
+void print_ntd(niceTD* plop, int bagSize)
 {
 
     if (plop==NULL)
