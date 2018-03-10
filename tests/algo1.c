@@ -43,7 +43,6 @@ int main(int argc, char** argv)
     FILE* input;
     int*  da_terminals;
     int** da_bags;
-    int**  da_edgesTD;
     int*  da_parcouru;
     int*  da_res;
 
@@ -101,7 +100,7 @@ int main(int argc, char** argv)
 
     fillBags(input, da_bags, nbBags, bagSize);
 
-    da_edgesTD = malloc((nbBags + 1) * sizeof(int));
+    int* da_edgesTD[nbBags + 1];
     initEdgesAtZero(da_edgesTD, 0, nbBags + 1);
     maxEdges = fillEdgesTD(input, da_edgesTD, maxEdges, nbBags + 1);
 
@@ -112,7 +111,7 @@ int main(int argc, char** argv)
 
     da_parcouru = calloc(sizeof(int), nbBags + 2);
 
-    da_res = findFirstTerminal(da_bags, da_edgesTD, nbBags, maxEdges, nbTerminals, da_terminals, da_parcouru, 1);
+    da_res = findFirstTerminal(da_bags, da_edgesTD, bagSize, maxEdges, nbTerminals, da_terminals, da_parcouru, 1);
 
     niceTD* root = constructor(2, bagSize);
     initArray(nbBags+2, da_parcouru);
@@ -123,7 +122,6 @@ int main(int argc, char** argv)
 
     ntd_debug(root, bagSize);
     fclose(input);
-
 
     /*
     free(da_terminals);
