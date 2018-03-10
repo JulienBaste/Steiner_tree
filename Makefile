@@ -1,39 +1,65 @@
-CC = gcc
-LDFLAGS =
-CFLAGS = -W -Wall -ansi -pedantic -g
 
-DIR = .
-BIN = $(DIR)/bin/
-OBJ = $(DIR)/obj/
-SRC = $(DIR)/src/
+# Paths
+DSRC = src
+DINC = inc
+DOBJ = obj
+DEXE = exe
+DTST = tests
 
-EXEC = $(BIN)graph $(BIN)random
-TEST = $(BIN)test
+# Compiler flags
+CFLAGS = -I$(DINC) -Wall -g
 
-all: $(EXEC)
+# Commands
+CC = gcc $(CFLAGS)
+LK = ld
+RM = rm
 
-test: $(TEST)
+# Objects
 
-$(BIN)test: $(OBJ)utils.o $(OBJ)test.o
-	$(CC) -o $(BIN)test $(OBJ)test.o $(OBJ)utils.o $(LDFLAGS)
+$(DOBJ)/amatrix.obj: $(DSRC)/amatrix.c $(DINC)/amatrix.h
+    $(CC) -o $(DOBJ)/amatrix.obj -c $(DSRC)/amatrix.c
 
-$(BIN)graph: $(OBJ)utils.o $(OBJ)graph.o
-	$(CC) -o $(BIN)graph $(OBJ)graph.o $(OBJ)utils.o $(LDFLAGS)
+$(DOBJ)/utils.obj: $(DSRC)/utils.c $(DINC)/utils.h
+    $(CC) -o $(DOBJ)/utils.obj -c $(DSRC)/utils.c
 
-$(BIN)random: $(OBJ)utils.o $(OBJ)random.o
-	$(CC) -o $(BIN)random $(OBJ)random.o $(OBJ)utils.o $(LDFLAGS)
+$(DOBJ)/tGraph.obj: $(DSRC)/tGraph.c $(DINC)/tGraph.h
+    $(CC) -o $(DOBJ)/tGraph.obj -c $(DSRC)/tGraph.c
 
-$(OBJ)utils.o: $(SRC)utils.c
-	$(CC) -o $(OBJ)utils.o -c $(SRC)utils.c $(CFLAGS)
+# naive algo
+$(DOBJ)/nSteiner.obj: $(DSRC)/nSteiner.c $(DINC)/steiner.h
+    $(CC) -o $(DOBJ)/nSteiner.obj -c $(DSRC)/nSteiner.c
+# algo 1
+$(DOBJ)/Steiner1.obj: $(DSRC)/Steiner1.c $(DINC)/steiner.h
+    $(CC) -o $(DOBJ)/Steiner1.obj -c $(DSRC)/Steiner1.c
 
-$(OBJ)graph.o: $(SRC)graph.c $(SRC)utils.h
-	$(CC) -o $(OBJ)graph.o -c $(SRC)graph.c $(CFLAGS)
+$(DOBJ)/enumeration.obj: $(DSRC)/enumeration.c
+    $(CC) -o $(DOBJ)/enumeration.obj -c $(DSRC)/enumeration.c
 
-$(OBJ)random.o: $(SRC)random.c $(SRC)utils.h
-	$(CC) -o $(OBJ)random.o -c $(SRC)random.c $(CFLAGS)
+$(DOBJ)/naive.obj: $(DTST)/naive.c
+    $(CC) -o $(DOBJ)/naive.obj -c $(DTST)/naive.c
 
-$(OBJ)test.o: $(SRC)test.c $(SRC)utils.h
-	$(CC) -o $(OBJ)test.o -c $(SRC)test.c $(CFLAGS)
+$(DOBJ)/enum.obj: $(DTST)/enum.c
+    $(CC) -o $(DOBJ)/enum.obj -c $(DTST)/enum.c
 
+$(DOBJ)/algo1.obj: $(DTST)/algo1.c
+    $(CC) -o $(DOBJ)/algo1.obj -c $(DTST)/algo1.c
+
+
+# Execs
+
+all: algo1
+
+naive: $(DOBJ)/amatrix.obj $(DOBJ)/utils.obj $(DOBJ)/tGraph.obj $(DOBJ)/nSteiner.obj $(DOBJ)/naive.obj
+    $(CC) -o $(DEXE)/naive  $(DOBJ)/amatrix.obj $(DOBJ)/utils.obj $(DOBJ)/tGraph.obj $(DOBJ)/nSteiner.obj $(DOBJ)/naive.obj
+
+algo1: $(DOBJ)/amatrix.obj $(DOBJ)/utils.obj $(DOBJ)/tGraph.obj $(DOBJ)/Steiner1.obj $(DOBJ)/enumeration.obj $(DOBJ)/algo1.obj
+    $(CC) -o $(DEXE)/algo1  $(DOBJ)/amatrix.obj $(DOBJ)/utils.obj $(DOBJ)/tGraph.obj $(DOBJ)/Steiner1.obj $(DOBJ)/enumeration.obj $(DOBJ)/algo1.obj
+
+enum: $(DOBJ)/enum.obj $(DOBJ)/amatrix.obj $(DOBJ)/tGraph.obj $(DOBJ)/utils.obj $(DOBJ)/enumeration.obj
+    $(CC) -o $(DEXE)/enum  $(DOBJ)/amatrix.obj $(DOBJ)/utils.obj $(DOBJ)/tGraph.obj $(DOBJ)/enum.obj $(DOBJ)/enumeration.obj
+
+
+# Clean all target
 clean:
-	rm $(OBJ)*.o $(BIN)*
+    $(RM) $(DOBJ)/*.obj
+    $(RM) $(DEXE)/*
