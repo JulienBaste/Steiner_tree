@@ -4,6 +4,14 @@
 #include "tGraph.h"
 #include "niceTD.h"
 
-tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD* ntd);
+typedef struct SteinerArgs SteinerArgs;
+
+struct SteinerArgs {
+	int*    terminals;
+	int     nbTerminals;
+	niceTD* ntd;
+};
+
+tGraph* tGraph_steiner(tGraph* g, SteinerArgs args);
 
 #endif

@@ -2,7 +2,7 @@
 #include "niceTD.h"
 #include "steiner.h"
 
-tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD* ntd)
+tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
 {
 	return g;
 }

@@ -1,19 +1,10 @@
 #include "tGraph.h"
 #include "steiner.h"
+#include "utils.h"
 #include <limits.h>
 #include <stdlib.h>
-#include <string.h>
-#include "utils.h"
-#include <stdio.h>
 
-
-// private operations
-void init_mask(int mask[], const int size);
-void next_mask(int mask[], const int size);
-char mask_contains(int mask[], const int size, const int val);
-
-
-tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD* ntd)
+tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
 {
 	// arêtes du Graph G
 	tEdge* edges = NULL;
@@ -29,7 +20,7 @@ tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD*
 	long min_b, b;
 
 	// exploration à partir de 'a'
-	a = terminals[0];
+	a = args.terminals[0];
 	// le poids associer est infinity
 	min_b = INT_MAX;
 	// initialiser le masque utiliser pour générer les différents sous-graphe
@@ -45,9 +36,9 @@ tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD*
 
 	while(mask_contains(mask,size,1))
 	{
-		tGraph_associated_graph(g, edges, mask, sg);
+		tGraph_associated_graph(g, edges, g->edges, mask, sg);
 		tGraph_explore(sg, a, expl);
-		if(tGraph_belongs_to_tree(sg, terminals, nTerminals))
+		if(tGraph_belongs_to_tree(sg, args.terminals, args.nbTerminals))
 		{
 			b = tGraph_weight(sg);
 			if(b < min_b)
@@ -64,33 +55,4 @@ tGraph* tGraph_steiner(tGraph* g, int terminals[], const int nTerminals, niceTD*
 }
 
 
-// opérations sur le masque utiliser par l'algo
 
-void inline init_mask(int mask[], const int size)
-{
-	memset(mask, 0, (sizeof(int) * size));
-}
-
-char mask_contains(int mask[], const int size, const int val)
-{
-	int i = 0;
-	while(i<size)
-	{
-		if(mask[i] == val) return 1;
-		i++;
-	}
-	return 0;
-}
-
-// k: la dernière case mise à zero
-void next_mask(int mask[], const int size)
-{
-	int i = 0;
-	while(i<size)
-	{
-		if(mask[i] == 1) mask[i] = 0;
-		else
-			{ mask[i] = 1; break; }
-		i++;
-	}
-}

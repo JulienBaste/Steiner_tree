@@ -14,7 +14,7 @@ struct niceTD
         Type 2 = Forget
         Type 3 = Join
         In Type 1 and 2, the only son go on left
-        */
+   */
 };
 
 #endif
