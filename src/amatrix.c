@@ -33,6 +33,7 @@ int** adja_matrix_create(int n)
 
 
 // Initialiser les cases d'une matrice d'adjacence à 0
+// a optimiser
 inline void adja_matrix_init(int** mat)
 {
 	int i,j;

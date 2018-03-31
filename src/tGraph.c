@@ -1,15 +1,24 @@
 #include "tGraph.h"
 #include "amatrix.h"
 #include "utils.h"
+#include "uf.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
 
+
+// private operations
+void _sort(tEdge a[], int l, int r);
+int  _partition(tEdge a[], int l, int r);
+
+
+
+
 // création d'un graphe à n sommets
 tGraph* tGraph_create(int nodes)
 {
-	tGraph* g = malloc(sizeof(struct tGraph));
+	tGraph* g = malloc(sizeof(tGraph));
 
 	g->nodes = nodes;
 	g->edges = 0;
@@ -140,6 +149,63 @@ tEdge* tGraph_edges_of(tGraph* g)
 	return t;
 }
 
+// hypothèse: nodes[] est triée
+tEdge* tGraph_edgesOfNodes(tGraph* g, int nodes[], const int size, int* nbEdges)
+{
+	int a, b, i; tEdge e; tEdge* edges; int ecount;
+
+	edges = malloc(sizeof(tEdge) * size * size);
+	ecount = 0;
+	i = 0;
+	while(i < size)
+	{
+		a = nodes[i];
+		For_Succ_Of(g,a,b)
+		{
+			// a optimiser
+			if(arraySearch(nodes, size, b))
+			{
+				e.x = a; e.y = b; e.val = Get_Edge(g,a,b);
+				edges[ecount++] = e;
+			}
+		}
+		i++;
+	}
+	edges = realloc(edges, ecount * sizeof(tEdge));
+	*nbEdges = ecount;
+
+	return edges;
+}
+
+tEdge* tGraph_mstOfNodes(tGraph* g, int nodes[], const int size, int maxVal, int* rSize)
+{
+	int nbEdges, i, k;
+	tEdge e, *edges, *mst;
+	UF* uf;
+
+	edges = tGraph_edgesOfNodes(g, nodes, size, &nbEdges);
+	_sort(edges, 0, nbEdges - 1);
+	mst = malloc(sizeof(tEdge) * nbEdges);
+	uf  = UF_create(maxVal);
+
+	k = 0;
+	for(i = 0; i<nbEdges; i++)
+	{
+		e = edges[i];
+		if(UF_find(uf, e.x) != UF_find(uf, e.y))
+		{
+			mst[k++] = e;
+			UF_union(uf, e.x, e.y);
+		}
+	}
+	*rSize = k;
+	mst = realloc(mst, k * sizeof(tEdge));
+
+	free(edges);
+	UF_destroy(uf);
+	return mst;
+}
+
 void rec_explore(tGraph* g, int a, int b, int* v);
 
 // parcourir le graphe à partir du noeud 'a'
@@ -154,7 +220,7 @@ void tGraph_explore(tGraph* g, int a, int* v)
 	// le noeud a est visité
 	v[a-1] = 1;
 	// visiter les successeurs de a
-	For_Succ_Of(g,a,b) { rec_explore(g,b,a,v); }
+	For_Neighbor_Of(g,a,b) { rec_explore(g,b,a,v); }
 
 }
 
@@ -165,7 +231,7 @@ void rec_explore(tGraph* g, int a, int b,int* v)
 
 	v[a-1] += 1;
 	if(v[a-1] == 1) {
-		For_Succ_Of(g,a,c) if(c != b) { rec_explore(g,c,a,v); }
+		For_Neighbor_Of(g,a,c) if(c != b) { rec_explore(g,c,a,v); }
 	}
 }
 
@@ -186,16 +252,62 @@ char tGraph_belongs_to_tree(tGraph* g, int nodes[], const int size)
 }
 
 // graphe associer à un masque
-void tGraph_associated_graph(tGraph* g, tEdge* edges, const  int* mask, tGraph* sg)
+void tGraph_associated_graph(tGraph* g, tEdge* edges, const int nbEdges,const  int* mask, tGraph* sg)
 {
 	int i;
-	for(i=0; i<g->edges; i++)
+	for(i=0; i<nbEdges; i++)
 	{
 		Set_Edge(sg, edges[i].x, edges[i].y, edges[i].val * mask[i]);
 	}
 }
 
+tGraph* tGraph_reduce(tGraph*g, int nodes[], const int size)
+{
+	int a, b, k, val;
+	tGraph* sg = tGraph_create(size);
+	k = 0;
+	For_Possible_Edge(sg,a,b)
+	{
+		val = Get_Edge(g, nodes[a-1], nodes[b-1]);
+		Set_Edge(sg, a, b, val);
+		if(val != 0) k++;
+	}
+	sg->edges = k;
+	return sg;
+}
 
 
+// private operations
 
+
+void _sort(tEdge a[], int l, int r)
+{
+   int j;
+
+   if( l < r )
+   {
+   	// divide and conquer
+        j = _partition( a, l, r);
+       _sort( a, l, j-1);
+       _sort( a, j+1, r);
+   }
+}
+
+int _partition(tEdge a[], int l, int r) {
+
+   int pivot, i, j;
+   tEdge t;
+   pivot = a[l].val;
+   i = l; j = r+1;
+
+   while(1)
+   {
+   	do ++i; while( a[i].val <= pivot && i <= r );
+   	do --j; while( a[j].val > pivot );
+   	if( i >= j ) break;
+   	t = a[i]; a[i] = a[j]; a[j] = t;
+   }
+   t = a[l]; a[l] = a[j]; a[j] = t;
+   return j;
+}
 
