@@ -293,10 +293,6 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
             tmp->left = son;
             tmp = son;
         }
-
-        free(newNode[0]);
-        free(newNode[1]);
-        free(newNode);
     }
 
     parcouru[next] = 1;
@@ -445,6 +441,7 @@ int** cmpBags(int bagSize, int* b1, int* b2)
 
     res[0] = introduce;
     res[1] = forget;
+    free(parcouru);
 
     return res;
 }
@@ -460,3 +457,15 @@ niceTD* constructor(int type, int size)
 
     return res;
 }
+
+/*int steiner(niceTD* tree)
+{
+    tSolTable fils;
+    switch(tree->type)
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+    }
+}*/

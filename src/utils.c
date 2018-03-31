@@ -151,3 +151,15 @@ void initArray(int size, int* array)
 {
     memset(array, 0, sizeof(int) * size);
 }
+
+int isLastColor(unsigned char* color, unsigned char e, int size)
+{
+    int i;
+    int compteur = 0;
+    for(i = 0; i < size; i++)
+    {
+        if(color[i] == e)compteur++;
+    }
+
+    return compteur;
+}

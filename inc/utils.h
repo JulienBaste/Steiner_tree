@@ -11,5 +11,6 @@ void copyArray(int size, int* t1, int* t2);
 int* put(int e, int size, int* tab);
 int* fusion(int sizeT1, int sizeT2, int* t1, int* t2);
 int  dichotomie(int value, int size, int res, int* tab);
+int isLastColor(unsigned char* color, unsigned char e, int size);
 
 #endif
