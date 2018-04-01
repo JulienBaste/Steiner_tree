@@ -4,12 +4,15 @@
 int main(int argc, char** argv)
 {
 
-	int bag[] = {22, 23, 44, 55};
+    int bag[] = {22, 23, 44, 55};
 
-	tSolTable* sols = tSolTable_create(bag, 4);
-	tSolTable_generate(sols);
-	tSolTable_view(sols);
-	tSolTable_destroy(sols);
+    tSolTable* sols = tSolTable_create(bag, 4);
+    tSolTable_generate(sols);
+    tSolTable_view(sols);
+    printf("Forget : \n");
+    sols = tSolTable_forget(sols, 55);
+    tSolTable_view(sols);
+    tSolTable_destroy(sols);
 
-	return 0;
+    return 0;
 }

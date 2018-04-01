@@ -10,27 +10,29 @@ typedef union Itree Itree;
 
 union Itree {
 
-	int  index;
-	Itree** childs;
+    int  index;
+    Itree** childs;
 };
 
 struct tSolTable {
 
-	// les sommets
-	int*   vertices;
-	// table des colorations
-	unsigned char*  colors;
-	// un index pour la table des colorations
-	Itree* index;
-	// pour chaque coloration associer un poids
-	unsigned long* weights;
-	// dimensions de la table des colorations
-	int    nbCol;
-	long   nbLine;
+    // les sommets
+    int*   vertices;
+    // table des colorations
+    unsigned char*  colors;
+    // un index pour la table des colorations
+    Itree* index;
+    // pour chaque coloration associer un poids
+    unsigned long* weights;
+    // dimensions de la table des colorations
+    int    nbCol;
+    long   nbLine;
 
 };
 
 tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs args);
+tSolTable* tSolTable_forget(tSolTable* t, int f);
+tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2);
 tSolTable* tSolTable_create(int bag[], const int size);
 unsigned char* tSolTable_colorTable(tSolTable* t, int i);
 int  tSolTable_indexOf(tSolTable* t, unsigned char col[]);

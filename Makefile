@@ -5,7 +5,7 @@ DOBJ = obj
 DEXE = exe
 DTST = tests
 # Compiler flags
-CFLAGS = -I$(DINC) -Wall
+CFLAGS = -I$(DINC) -Wall -g
 # Commands
 CC = gcc $(CFLAGS)
 # How to make Objects
@@ -29,6 +29,8 @@ tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/util
 	$(CC) -o $(DEXE)/tGraphTest $^
 enumTest: $(DOBJ)/enumTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o
 	$(CC) -o $(DEXE)/enumTest  $^
+test: $(DOBJ)/test.o $(DOBJ)/utils.o
+	$(CC) -o $(DEXE)/test $^
 
 
 clean:

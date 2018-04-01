@@ -1,43 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "utils.h"
 
 
 
 void inline init_mask(int mask[], const int size)
 {
-	memset(mask, 0, (sizeof(int) * size));
+    memset(mask, 0, (sizeof(int) * size));
 }
 
 char mask_contains(int mask[], const int size, const int val)
 {
-	int i = 0;
-	while(i<size)
-	{
-		if(mask[i] == val) return 1;
-		i++;
-	}
-	return 0;
+    int i = 0;
+    while(i<size)
+    {
+        if(mask[i] == val) return 1;
+        i++;
+    }
+    return 0;
 }
 
 void next_mask(int mask[], const int size)
 {
-	int i = 0;
-	while(i<size)
-	{
-		if(mask[i] == 1) mask[i] = 0;
-		else
-			{ mask[i] = 1; break; }
-		i++;
-	}
+    int i = 0;
+    while(i<size)
+    {
+        if(mask[i] == 1) mask[i] = 0;
+        else
+            { mask[i] = 1; break; }
+        i++;
+    }
 }
 
 int arraySearch(int array[], const int size, const int val)
 {
-	int i = 0;
-	while(i < size) if(array[i++] == val) return 1;
-	return 0;
+    int i = 0;
+    while(i < size) if(array[i++] == val) return 1;
+    return 0;
 }
 
 // QuickSort
@@ -72,7 +73,7 @@ void _quickSort( int a[], int l, int r)
 
    if( l < r )
    {
-   	// divide and conquer
+       // divide and conquer
         j = partition( a, l, r);
        _quickSort( a, l, j-1);
        _quickSort( a, j+1, r);
@@ -82,9 +83,8 @@ void _quickSort( int a[], int l, int r)
 
 void quickSort(int arr[], const int size)
 {
-	_quickSort(arr, 0, size - 1);
+    _quickSort(arr, 0, size - 1);
 }
-
 
 long bellNumber(int n)
 {
@@ -136,7 +136,6 @@ int dichotomie(int value, int size, int res, int* tab)
     }
 }
 
-
 int* triFusion(int size, int* tab)
 {
     if(size <= 1) return tab;
@@ -175,4 +174,28 @@ int* put(int e, int size, int* tab)
     }
 
     return res;
+}
+
+int isLast(unsigned char* t, int size, unsigned char f)
+{
+    int i;
+    int res;
+
+    for(i = 0; i < size; i++)
+    {
+        if(t[i] == f) res++;
+    }
+
+    if(res == 1) return 1;
+    else return 0;
+}
+
+void initWeights(unsigned long* w, int size)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        w[i] = LONG_MAX;
+    }
 }

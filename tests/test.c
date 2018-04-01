@@ -10,5 +10,5 @@ int main(int argc, char const *argv[])
 {
     int tab[]={2,1,0,0};
     quickSort(tab, 4);
-    printArray(4, tab);
+    printIntArray(tab, 4);
 }
