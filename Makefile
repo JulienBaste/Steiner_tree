@@ -29,7 +29,7 @@ tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/util
 	$(CC) -o $(DEXE)/tGraphTest $^
 enumTest: $(DOBJ)/enumTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o
 	$(CC) -o $(DEXE)/enumTest  $^
-test: $(DOBJ)/test.o $(DOBJ)/utils.o
+test: $(DOBJ)/test.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o  $(DOBJ)/tGraph.o $(DOBJ)/amatrix.o
 	$(CC) -o $(DEXE)/test $^
 
 

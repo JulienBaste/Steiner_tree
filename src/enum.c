@@ -303,9 +303,171 @@ tSolTable* tSolTable_forget(tSolTable* t, int f)
         }
     }
 
-    free(current);
     free(newCurrent);
     free(newBag);
     tSolTable_destroy(t);
     return newT;
+}
+
+tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
+{
+    tSolTable* newT = tSolTable_create(t1->vertices, t1->nbCol);
+    unsigned char* current = calloc(t1->nbCol, sizeof(unsigned char));
+    unsigned char* currentT1;
+    int** edgesT1;
+    int** edgesT2;
+    int* tmp;
+    int i;
+    int j;
+    int k;
+    int l;
+    int m;
+    int minimum;
+    int index;
+
+    for(i = 0; i < t1->nbLine; i++)
+    {
+        currentT1 = tSolTable_colorTable(t1, i);
+        edgesT1 = tSolTable_cmp(currentT1, t1->nbCol);
+
+        for(j = 0; j < t2->nbLine; j++)
+        {
+            current = memcpy(current, tSolTable_colorTable(t2, i), t2->nbCol);
+            edgesT2 = tSolTable_cmp(current, t2->nbCol);
+            k = 1;
+            l = 1;
+
+            while(k < t1->nbCol)
+            {
+                while(l < t1->nbCol)
+                {
+                    if(isConnected(edgesT1[k], edgesT2[l], t1->nbCol))
+                    {
+                        if(tmp != NULL) free(tmp);
+                        tmp = mergeColor(edgesT1[k], edgesT2[l], t1->nbCol);
+                        minimum = min(k, l);
+
+                        for(m = 0; m < t1->nbCol; m++)
+                        {
+                            if(tmp[m] == -1) break;
+                            current[tmp[m]] = minimum;
+                        }
+                        edgesT2 = tSolTable_cmp(current, t2->nbCol);
+                    }
+                    else l++;
+                }
+                k++;
+            }
+
+            for(k = 0; k < t1->nbCol; k++)
+            {
+                if(current[k] == 0 && currentT1[k] != 0) current[k] = currentT1[k];
+            }
+
+            index = tSolTable_indexOf(newT, current);
+
+            if(newT->weights[index] > t1->weights[i] + t2->weights[j])
+            {
+                newT->weights[index] = t1->weights[i] + t2->weights[j];
+            }
+        }
+    }
+
+    free(current);
+    free(tmp);
+    tSolTable_destroy(t1);
+    tSolTable_destroy(t2);
+    return newT;
+}
+
+int** tSolTable_cmp(unsigned char* c, int size)
+{
+    int i;
+    int index;
+    int** res = malloc(sizeof(int) * size);
+
+    for(i = 0; i < size; i++)
+    {
+        res[i] = calloc(size, sizeof(int));
+        initArrayWith(res[i], -1, size);
+    }
+
+    for(i = 0; i < size; i++)
+    {
+        index = nextThing(size, -1, res[c[i]]);
+        res[c[i]][index] = i;
+    }
+
+    return res;
+}
+
+int* mergeColor(int* c1, int* c2, int size)
+{
+    int i;
+    int index1 = 0;
+    int index2 = 0;
+    int* res = malloc(sizeof(int) * size);
+    initArrayWith(res, -1, size);
+
+    for(i = 0; i < size; i++)
+    {
+        if(c1[i - index1] == -1)
+        {
+            res[i] = c2[i - index2];
+            continue;
+        }
+        if(c2[i - index2] == -1)
+        {
+            res[i] = c1[i - index1];
+            continue;
+        }
+
+        if(c1[i - index1] < c2[i - index2])
+        {
+            res[i] = c1[i - index1];
+            index2++;
+        }
+        else if(c1[i - index1] == c2[i - index2])
+        {
+            res[i] = c1[i - index1];
+        }
+        else
+        {
+            res[i] = c2[i - index2];
+            index1++;
+        }
+    }
+
+    return res;
+}
+
+int isConnected(int* c1, int* c2, int size)
+{
+    int tmp;
+    int res = 0;
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        tmp = dichotomie(c1[i], size, 0, c2);
+        if(tmp != -1)
+        {
+            res = 1;
+            break;
+        }
+    }
+
+    return res;
+}
+
+int isFinished(int* t, int size)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(t[i] == -1) return 0;
+    }
+
+    return 1;
 }

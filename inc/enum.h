@@ -39,5 +39,9 @@ int  tSolTable_indexOf(tSolTable* t, unsigned char col[]);
 void tSolTable_destroy(tSolTable* t);
 void tSolTable_generate(tSolTable* t);
 void tSolTable_view(tSolTable* t);
+int** tSolTable_cmp(unsigned char* c, int size);
+int* mergeColor(int* c1, int* c2, int size);
+int isConnected(int* c1, int* c2, int size);
+int isFinished(int* t, int size);
 
 #endif

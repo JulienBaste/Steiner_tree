@@ -199,3 +199,31 @@ void initWeights(unsigned long* w, int size)
         w[i] = LONG_MAX;
     }
 }
+
+int nextThing(int size, int v, int* array)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(array[i] == v) return i;
+    }
+
+    return -1;
+}
+
+void initArrayWith(int* t, int v, int size)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        t[i] = v;
+    }
+}
+
+int min(int i1, int i2)
+{
+    if(i1 < i2) return i1;
+    else return i2;
+}

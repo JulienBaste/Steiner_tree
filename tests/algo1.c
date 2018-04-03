@@ -13,7 +13,6 @@
 
 void  fillBags(FILE* file, int** bags, int nbBags, int bagSize);
 int   fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge);
-int   nextZero(int size, int* array);
 void  initEdgesAtZero(int** edges, int first, int last);
 void  buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next, int* parcouru);
 int*  toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru);
@@ -229,18 +228,6 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
     }
 
     return maxEdges;
-}
-
-int nextZero(int size, int* array)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        if(array[i] == 0) return i;
-    }
-
-    return -1;
 }
 
 void initEdgesAtZero(int** edges, int first, int last)
