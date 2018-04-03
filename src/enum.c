@@ -380,6 +380,11 @@ tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
     return newT;
 }
 
+tSolTable* tSolTable_feuille()
+{
+    return tSolTable_create(NULL, 0);
+}
+
 int** tSolTable_cmp(unsigned char* c, int size)
 {
     int i;
