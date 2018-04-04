@@ -4,26 +4,11 @@
 #include <string.h>
 #include <time.h>
 #include "utils.h"
+#include "niceTD.h"
 #include "tGraph.h"
 #include "steiner.h"
 
-#define BUFSIZE 1024
-
-void  fillBags(FILE* file, int** bags, int nbBags, int bagSize);
-int   fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge);
-void  initEdgesAtZero(int** edges, int first, int last);
-void  buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next, int* parcouru);
-int*  toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru);
-int*  findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int nbTerminals, int* terminals, int* parcouru, int next);
-int** cmpBags(int bagSize, int* b1, int* b2);
-void ntd_debug(niceTD* root, int bagSize);
-niceTD* constructor(int type, int size);
-void copyArray(int size, int* src, int* dest);
-int nextZero(int size, int* array);
-void initArray(int size, int* t);
-
-
-int main(int argc, char** argv)
+void preCalculs(const char* path, tGraph* tg, niceTD* ntd)
 {
     /* Data */
     //
@@ -46,16 +31,10 @@ int main(int argc, char** argv)
     int*  da_parcouru;
     int*  da_res;
 
-
-    if(argc < 2)
-    {
-        fprintf(stderr,"missing argument, going to die :( \n"); exit(1);
-    }
-
     // init the buffer, but why ?
     memset(buffer, '\0', BUFSIZE);
 
-    input = fopen(argv[1], "r");
+    input = fopen(path, "r");
 
     if(input == NULL)
     {
@@ -114,24 +93,21 @@ int main(int argc, char** argv)
     da_res = findFirstTerminal(da_bags, da_edgesTD, bagSize, maxEdges, nbTerminals, da_terminals, da_parcouru, 1);
 
     niceTD* root = constructor(2, bagSize);
-    initArray(nbBags+2, da_parcouru);
+    initArrayWith(da_parcouru,0,nbBags+2);
     root->bag[0] = da_bags[da_res[0]][da_res[1]];
 
     buildNiceTD(root, da_bags, da_edgesTD, nbBags, bagSize, maxEdges, da_res[0], da_parcouru);
 
-
     ntd_debug(root, bagSize);
     fclose(input);
 
-    /*
+    tg = g;
+    ntd = root;
+
     free(da_terminals);
     free(da_bags);
-    free(da_edgesTD);
     free(da_parcouru);
     free(da_res);
-    */
-
-    return 0;
 }
 
 void _ntd_debug(niceTD* root, int bagSize, int prof)
@@ -204,14 +180,14 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
 
     while(fscanf(file, "%d %d", &u, &v) > 0)
     {
-        index = nextZero(maxEdges, edgesTD[u]);
+        index = nextThing(maxEdges,0,edgesTD[u]);
         if(index == -1)
         {
             maxEdges = maxEdges * 2;
             for(i = 0; i < nbEdge; i++)
             {
                 int* newEdge = malloc(sizeof(int) * maxEdges);
-                initArray(maxEdges, newEdge);
+                initArrayWith(newEdge,0,maxEdges);
                 memcpy(newEdge, edgesTD[i], maxEdges/2);
                 if(i == u)
                 {
@@ -224,7 +200,7 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
         {
             edgesTD[u][index] = v;
         }
-        index = nextZero(maxEdges, edgesTD[v]);
+        index = nextThing(maxEdges,0,edgesTD[v]);
         edgesTD[v][index] = u;
     }
 
@@ -238,7 +214,7 @@ void initEdgesAtZero(int** edges, int first, int last)
     for(i = first; i <= last; i++)
     {
         edges[i] = malloc(sizeof(int) * 1);
-        initArray(1, edges[i]);
+        initArrayWith(edges[i],0,1);
     }
 }
 
@@ -252,7 +228,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     int* bag = bags[next];
     int* fils = edges[next];
 
-    if(nextZero(bagSize, bag) != 0)
+    if(nextThing(bagSize,0,bag) != 0)
     {
         int** newNode = cmpBags(bagSize, tree->bag, bag);
 
@@ -260,7 +236,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         {
             if(newNode[0][i] == 0) break;
             niceTD* son = constructor(2, bagSize);
-            copyArray(bagSize, tmp->bag, son->bag);
+            memcpy(son->bag, tmp->bag, bagSize);
             index = dichotomie(newNode[0][i], bagSize, 0, son->bag);
             son->bag[index] = 0;
             quickSort(son->bag, bagSize);
@@ -273,8 +249,8 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         {
             if(newNode[1][i] == 0) break;
             niceTD* son = constructor(1, bagSize);
-            copyArray(bagSize, tmp->bag, son->bag);
-            index = nextZero(bagSize, son->bag);
+            memcpy(son->bag, tmp->bag, bagSize);
+            index = nextThing(bagSize,0,son->bag);
             son->bag[index] = newNode[1][i];
             quickSort(son->bag, bagSize);
             tmp->type = 2;
@@ -290,13 +266,13 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     {
         niceTD* leftSon = constructor(2, bagSize);
         niceTD* rightSon = constructor(2, bagSize);
-        copyArray(bagSize, tmp->bag, leftSon->bag);
-        copyArray(bagSize, tmp->bag, rightSon->bag);
+        memcpy(leftSon->bag, tmp->bag, bagSize);
+        memcpy(rightSon->bag, tmp->bag, bagSize);
         tmp->left = leftSon;
         tmp->right = rightSon;
         tmp->type = 3;
 
-        index = nextZero(maxEdges+1, toGo);
+        index = nextThing(maxEdges+1,0,toGo);
         newNext = toGo[index-1];
         toGo[index-1] = 0;
         toGo[0] = toGo[0] - 1;
@@ -312,15 +288,15 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
 
     if(toGo[0] == 1)
     {
-        index = nextZero(bagSize, tmp->bag);
+        index = nextThing(bagSize,0,tmp->bag);
         while(index > 1)
         {
             niceTD* son = constructor(1, bagSize);
-            copyArray(bagSize, tmp->bag, son->bag);
+            memcpy(son->bag, tmp->bag, bagSize);
             son->bag[index-1] = 0;
             tmp->left = son;
             tmp = son;
-            index = nextZero(bagSize, tmp->bag);
+            index = nextThing(bagSize,0,tmp->bag);
         }
         niceTD* end = constructor(0, bagSize);
         tmp->left = end;
@@ -333,7 +309,7 @@ int* toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru)
     int i;
     int index = 1;
     int* res = malloc(sizeof(int) * sizeSons+1);
-    initArray(sizeSons, res);
+    initArrayWith(res, 0, sizeSons);
 
     for(i = 0; i < sizeSons; i++)
     {
@@ -403,9 +379,9 @@ int** cmpBags(int bagSize, int* b1, int* b2)
     int* forget = malloc(sizeof(int) * bagSize);
     int* parcouru = malloc(sizeof(int) * bagSize);
 
-    initArray(bagSize, introduce);
-    initArray(bagSize, forget);
-    initArray(bagSize, parcouru);
+    initArrayWith(introduce, 0, bagSize);
+    initArrayWith(forget, 0, bagSize);
+    initArrayWith(parcouru, 0, bagSize);
 
     for(i = 0; i < bagSize; i++)
     {
@@ -440,40 +416,8 @@ niceTD* constructor(int type, int size)
     res->left = NULL;
     res->right = NULL;
     res->bag = malloc(sizeof(int) * size);
-    initArray(size, res->bag);
+    initArrayWith(res->bag,0,size);
     res->type = type;
 
     return res;
-}
-
-void initArray(int size, int* t)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        t[i] = 0;
-    }
-}
-
-int nextZero(int size, int* array)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        if(array[i] == 0) return i;
-    }
-
-    return -1;
-}
-
-void copyArray(int size, int* src, int* dest)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        dest[i] = src[i];
-    }
 }

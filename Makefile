@@ -22,14 +22,14 @@ all: naive algo1
 naive: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/nSteiner.o $(DOBJ)/naive.o
 	$(CC) -o $(DEXE)/naive  $^
 # algo of the paper
-algo1: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/Steiner1.o $(DOBJ)/enum.o $(DOBJ)/uf.o $(DOBJ)/algo1.o
+algo1: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/Steiner1.o $(DOBJ)/enum.o $(DOBJ)/uf.o $(DOBJ)/algo1.o 
 	$(CC) -o $(DEXE)/algo1  $^
 # tests
 tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/uf.o
 	$(CC) -o $(DEXE)/tGraphTest $^
 enumTest: $(DOBJ)/enumTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o
 	$(CC) -o $(DEXE)/enumTest  $^
-test: $(DOBJ)/test.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o  $(DOBJ)/tGraph.o $(DOBJ)/amatrix.o
+test: $(DOBJ)/test.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o  $(DOBJ)/tGraph.o $(DOBJ)/niceTD.o $(DOBJ)/amatrix.o
 	$(CC) -o $(DEXE)/test $^
 
 
