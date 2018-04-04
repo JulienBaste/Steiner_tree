@@ -4,8 +4,6 @@
 #include <limits.h>
 #include "utils.h"
 
-
-
 void inline init_mask(int mask[], const int size)
 {
     memset(mask, 0, (sizeof(int) * size));
@@ -226,4 +224,26 @@ int min(int i1, int i2)
 {
     if(i1 < i2) return i1;
     else return i2;
+}
+
+void copyArray(int size, int* t1, int* t2)
+{
+    memcpy(t2, t1, sizeof(int) * size);
+}
+
+void initArray(int size, int* array)
+{
+    memset(array, 0, sizeof(int) * size);
+}
+
+int nextZero(int size, int* array)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(array[i] == 0) return i;
+    }
+
+    return -1;
 }

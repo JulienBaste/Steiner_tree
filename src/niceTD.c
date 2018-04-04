@@ -180,15 +180,15 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
 
     while(fscanf(file, "%d %d", &u, &v) > 0)
     {
-        index = nextThing(maxEdges,0,edgesTD[u]);
+        index = nextZero(maxEdges, edgesTD[u]);
         if(index == -1)
         {
             maxEdges = maxEdges * 2;
             for(i = 0; i < nbEdge; i++)
             {
                 int* newEdge = malloc(sizeof(int) * maxEdges);
-                initArrayWith(newEdge,0,maxEdges);
-                memcpy(newEdge, edgesTD[i], maxEdges/2);
+                initArray(maxEdges, newEdge);
+                copyArray(maxEdges/2, edgesTD[i], newEdge);
                 if(i == u)
                 {
                     newEdge[(maxEdges/2)] = v;
@@ -200,7 +200,7 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
         {
             edgesTD[u][index] = v;
         }
-        index = nextThing(maxEdges,0,edgesTD[v]);
+        index = nextZero(maxEdges, edgesTD[v]);
         edgesTD[v][index] = u;
     }
 
@@ -214,7 +214,7 @@ void initEdgesAtZero(int** edges, int first, int last)
     for(i = first; i <= last; i++)
     {
         edges[i] = malloc(sizeof(int) * 1);
-        initArrayWith(edges[i],0,1);
+        initArray(1, edges[i]);
     }
 }
 
@@ -228,7 +228,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     int* bag = bags[next];
     int* fils = edges[next];
 
-    if(nextThing(bagSize,0,bag) != 0)
+    if(nextZero(bagSize, bag) != 0)
     {
         int** newNode = cmpBags(bagSize, tree->bag, bag);
 
@@ -236,7 +236,7 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         {
             if(newNode[0][i] == 0) break;
             niceTD* son = constructor(2, bagSize);
-            memcpy(son->bag, tmp->bag, bagSize);
+            copyArray(bagSize, tmp->bag, son->bag);
             index = dichotomie(newNode[0][i], bagSize, 0, son->bag);
             son->bag[index] = 0;
             quickSort(son->bag, bagSize);
@@ -249,14 +249,18 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
         {
             if(newNode[1][i] == 0) break;
             niceTD* son = constructor(1, bagSize);
-            memcpy(son->bag, tmp->bag, bagSize);
-            index = nextThing(bagSize,0,son->bag);
+            copyArray(bagSize, tmp->bag, son->bag);
+            index = nextZero(bagSize, son->bag);
             son->bag[index] = newNode[1][i];
             quickSort(son->bag, bagSize);
             tmp->type = 2;
             tmp->left = son;
             tmp = son;
         }
+
+        free(newNode[0]);
+        free(newNode[1]);
+        free(newNode);
     }
 
     parcouru[next] = 1;
@@ -266,13 +270,13 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
     {
         niceTD* leftSon = constructor(2, bagSize);
         niceTD* rightSon = constructor(2, bagSize);
-        memcpy(leftSon->bag, tmp->bag, bagSize);
-        memcpy(rightSon->bag, tmp->bag, bagSize);
+        copyArray(bagSize, tmp->bag, leftSon->bag);
+        copyArray(bagSize, tmp->bag, rightSon->bag);
         tmp->left = leftSon;
         tmp->right = rightSon;
         tmp->type = 3;
 
-        index = nextThing(maxEdges+1,0,toGo);
+        index = nextZero(maxEdges+1, toGo);
         newNext = toGo[index-1];
         toGo[index-1] = 0;
         toGo[0] = toGo[0] - 1;
@@ -288,15 +292,15 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
 
     if(toGo[0] == 1)
     {
-        index = nextThing(bagSize,0,tmp->bag);
+        index = nextZero(bagSize, tmp->bag);
         while(index > 1)
         {
             niceTD* son = constructor(1, bagSize);
-            memcpy(son->bag, tmp->bag, bagSize);
+            copyArray(bagSize, tmp->bag, son->bag);
             son->bag[index-1] = 0;
             tmp->left = son;
             tmp = son;
-            index = nextThing(bagSize,0,tmp->bag);
+            index = nextZero(bagSize, tmp->bag);
         }
         niceTD* end = constructor(0, bagSize);
         tmp->left = end;
@@ -309,7 +313,7 @@ int* toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru)
     int i;
     int index = 1;
     int* res = malloc(sizeof(int) * sizeSons+1);
-    initArrayWith(res, 0, sizeSons);
+    initArray(sizeSons, res);
 
     for(i = 0; i < sizeSons; i++)
     {
@@ -379,9 +383,9 @@ int** cmpBags(int bagSize, int* b1, int* b2)
     int* forget = malloc(sizeof(int) * bagSize);
     int* parcouru = malloc(sizeof(int) * bagSize);
 
-    initArrayWith(introduce, 0, bagSize);
-    initArrayWith(forget, 0, bagSize);
-    initArrayWith(parcouru, 0, bagSize);
+    initArray(bagSize, introduce);
+    initArray(bagSize, forget);
+    initArray(bagSize, parcouru);
 
     for(i = 0; i < bagSize; i++)
     {
@@ -405,7 +409,6 @@ int** cmpBags(int bagSize, int* b1, int* b2)
 
     res[0] = introduce;
     res[1] = forget;
-    free(parcouru);
 
     return res;
 }
@@ -416,7 +419,7 @@ niceTD* constructor(int type, int size)
     res->left = NULL;
     res->right = NULL;
     res->bag = malloc(sizeof(int) * size);
-    initArrayWith(res->bag,0,size);
+    initArray(size, res->bag);
     res->type = type;
 
     return res;

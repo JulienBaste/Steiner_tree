@@ -4,13 +4,16 @@
 #include <string.h>
 #include <time.h>
 #include "utils.h"
+#include "niceTD.h"
 #include "tGraph.h"
 #include "steiner.h"
 
 #define BUFSIZE 1024
 
+
 void  fillBags(FILE* file, int** bags, int nbBags, int bagSize);
 int   fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge);
+int   nextZero(int size, int* array);
 void  initEdgesAtZero(int** edges, int first, int last);
 void  buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize, int maxEdges, int next, int* parcouru);
 int*  toVisit(int sizeSons, int sizeParcouru, int* sons, int* parcouru);
@@ -18,9 +21,6 @@ int*  findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int 
 int** cmpBags(int bagSize, int* b1, int* b2);
 void ntd_debug(niceTD* root, int bagSize);
 niceTD* constructor(int type, int size);
-void copyArray(int size, int* src, int* dest);
-int nextZero(int size, int* array);
-void initArray(int size, int* t);
 
 
 int main(int argc, char** argv)
@@ -212,7 +212,7 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
             {
                 int* newEdge = malloc(sizeof(int) * maxEdges);
                 initArray(maxEdges, newEdge);
-                memcpy(newEdge, edgesTD[i], maxEdges/2);
+                copyArray(maxEdges/2, edgesTD[i], newEdge);
                 if(i == u)
                 {
                     newEdge[(maxEdges/2)] = v;
@@ -229,6 +229,18 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
     }
 
     return maxEdges;
+}
+
+int nextZero(int size, int* array)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(array[i] == 0) return i;
+    }
+
+    return -1;
 }
 
 void initEdgesAtZero(int** edges, int first, int last)
@@ -281,6 +293,10 @@ void buildNiceTD(niceTD* tree, int** bags, int** edges, int nbBags, int bagSize,
             tmp->left = son;
             tmp = son;
         }
+
+        free(newNode[0]);
+        free(newNode[1]);
+        free(newNode);
     }
 
     parcouru[next] = 1;
@@ -429,7 +445,6 @@ int** cmpBags(int bagSize, int* b1, int* b2)
 
     res[0] = introduce;
     res[1] = forget;
-    free(parcouru);
 
     return res;
 }
@@ -444,36 +459,4 @@ niceTD* constructor(int type, int size)
     res->type = type;
 
     return res;
-}
-
-void initArray(int size, int* t)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        t[i] = 0;
-    }
-}
-
-int nextZero(int size, int* array)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        if(array[i] == 0) return i;
-    }
-
-    return -1;
-}
-
-void copyArray(int size, int* src, int* dest)
-{
-    int i;
-
-    for(i = 0; i < size; i++)
-    {
-        dest[i] = src[i];
-    }
 }

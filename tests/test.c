@@ -4,22 +4,16 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
 #include "utils.h"
-#include "enum.h"
+#include "niceTD.h"
+#include "tGraph.h"
+#include "steiner.h"
 
 int main(int argc, char const *argv[])
 {
-    unsigned char tab1[]={1,1,0,0,0,0};
-    unsigned char tab2[]={0,2,2,0,0,0};
+    tGraph* tg = NULL;
+    niceTD* ntd = NULL;
 
-    int** res1 = tSolTable_cmp(tab1, 6);
-    int** res2 = tSolTable_cmp(tab2, 6);
-
-    printIntArray(res1[1],6);
-    printIntArray(res2[2],6);
-
-    int* res = mergeColor(res1[1], res2[2], 6);
-
-    printIntArray(res, 6);
-
+    preCalculs(argv[1], tg, ntd);
 }

@@ -17,5 +17,8 @@ void initWeights(unsigned long* w, int size);
 int nextThing(int size, int v, int* array);
 void initArrayWith(int* t, int v, int size);
 int min(int i1, int i2);
+void copyArray(int size, int* t1, int* t2);
+void initArray(int size, int* array);
+int nextZero(int size, int* array);
 
 #endif
