@@ -12,8 +12,7 @@
 
 int main(int argc, char const *argv[])
 {
-    tGraph* tg = NULL;
-    niceTD* ntd = NULL;
+    preCalcul* res = preCalculs(argv[1]);
 
-    preCalculs(argv[1], tg, ntd);
+    ntd_debug(res->ntd, 5);
 }

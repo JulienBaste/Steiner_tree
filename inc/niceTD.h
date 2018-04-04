@@ -20,6 +20,13 @@ struct niceTD
    */
 };
 
+typedef struct preCalcul preCalcul;
+struct preCalcul
+{
+    niceTD* ntd;
+    tGraph* tg;
+};
+
 #define BUFSIZE 1024
 
 void  fillBags(FILE* file, int** bags, int nbBags, int bagSize);
@@ -31,5 +38,5 @@ int*  findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int 
 int** cmpBags(int bagSize, int* b1, int* b2);
 void ntd_debug(niceTD* root, int bagSize);
 niceTD* constructor(int type, int size);
-void preCalculs(const char* path, tGraph* g, niceTD* ntd);
+preCalcul* preCalculs(const char* path);
 #endif
