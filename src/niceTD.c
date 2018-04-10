@@ -8,7 +8,7 @@
 #include "tGraph.h"
 #include "steiner.h"
 
-SteinerArgsl* preCalculs(const char* path)
+SteinerArgs* preCalculs(const char* path)
 {
     /* Data */
     //

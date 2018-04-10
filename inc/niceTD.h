@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include "tGraph.h"
-#include "steiner.h"
 
 typedef struct niceTD niceTD;
 struct niceTD
@@ -32,5 +31,4 @@ int*  findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int 
 int** cmpBags(int bagSize, int* b1, int* b2);
 void ntd_debug(niceTD* root, int bagSize);
 niceTD* constructor(int type, int size);
-SteinerArgs* preCalculs(const char* path);
 #endif

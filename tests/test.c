@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "tGraph.h"
 #include "niceTD.h"
+#include "steiner.h"
 
 int main(int argc, char const *argv[])
 {
