@@ -472,3 +472,43 @@ int isFinished(int* t, int size)
 
     return 1;
 }
+
+tSolTable* tSolTable_computeSon(niceTD* ntd)
+{
+    tSolTable* left;
+    tSolTable* right;
+    tSolTable* res;
+
+    switch(ntd->type)
+    {
+        case 0: return tSolTable_create(NULL, 0);
+        case 1:
+        {
+            left = tSolTable_computeSon(ntd->left);
+            break;
+        }
+        case 2:
+        {
+            int** tmp;
+            int f;
+            left = tSolTable_computeSon(ntd->left);
+            tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
+            f = tmp[1][0];
+            res = tSolTable_forget(left, f);
+            free(tmp[0]);
+            free(tmp[1]);
+            free(tmp);
+            tSolTable_destroy(left);
+            return res;
+        }
+        case 3:
+        {
+            left = tSolTable_computeSon(ntd->left);
+            right = tSolTable_computeSon(ntd->right);
+            res = tSolTable_join(left, right);
+            tSolTable_destroy(left);
+            tSolTable_destroy(right);
+            return res;
+        }
+    }
+}
