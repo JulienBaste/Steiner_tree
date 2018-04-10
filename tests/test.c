@@ -6,13 +6,12 @@
 #include <string.h>
 #include <time.h>
 #include "utils.h"
-#include "niceTD.h"
 #include "tGraph.h"
-#include "steiner.h"
+#include "niceTD.h"
 
 int main(int argc, char const *argv[])
 {
-    preCalcul* res = preCalculs(argv[1]);
+    SteinerArgs* res = preCalculs(argv[1]);
 
     ntd_debug(res->ntd, 5);
 }

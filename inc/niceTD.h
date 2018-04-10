@@ -1,8 +1,9 @@
 #ifndef INC_NICETD_H_
 #define INC_NICETD_H_
 
- #include <stdio.h>
+#include <stdio.h>
 #include "tGraph.h"
+#include "steiner.h"
 
 typedef struct niceTD niceTD;
 struct niceTD
@@ -20,13 +21,6 @@ struct niceTD
    */
 };
 
-typedef struct preCalcul preCalcul;
-struct preCalcul
-{
-    niceTD* ntd;
-    tGraph* tg;
-};
-
 #define BUFSIZE 1024
 
 void  fillBags(FILE* file, int** bags, int nbBags, int bagSize);
@@ -38,5 +32,5 @@ int*  findFirstTerminal(int** bags, int** edges, int bagSize, int maxEdges, int 
 int** cmpBags(int bagSize, int* b1, int* b2);
 void ntd_debug(niceTD* root, int bagSize);
 niceTD* constructor(int type, int size);
-preCalcul* preCalculs(const char* path);
+SteinerArgs* preCalculs(const char* path);
 #endif

@@ -5,11 +5,11 @@
 #include "niceTD.h"
 
 typedef struct SteinerArgs SteinerArgs;
-
 struct SteinerArgs {
-	int*    terminals;
-	int     nbTerminals;
-	niceTD* ntd;
+    int*    terminals;
+    int     nbTerminals;
+    niceTD* ntd;
+    tGraph* tg;
 };
 
 tGraph* tGraph_steiner(tGraph* g, SteinerArgs args);

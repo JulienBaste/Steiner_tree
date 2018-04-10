@@ -8,7 +8,7 @@
 #include "tGraph.h"
 #include "steiner.h"
 
-preCalcul* preCalculs(const char* path)
+SteinerArgsl* preCalculs(const char* path)
 {
     /* Data */
     //
@@ -99,15 +99,18 @@ preCalcul* preCalculs(const char* path)
     buildNiceTD(root, da_bags, da_edgesTD, nbBags, bagSize, maxEdges, da_res[0], da_parcouru);
 
     /*ntd_debug(root, bagSize);*/
+
+    SteinerArgs* res = malloc(sizeof(SteinerArgs));
+    res->terminals = da_terminals;
+    res->nbTerminals = nbTerminals;
+    res->ntd = root;
+    res->tg = g;
+
     fclose(input);
     free(da_terminals);
     free(da_bags);
     free(da_parcouru);
     free(da_res);
-
-    preCalcul* res = malloc(sizeof(preCalcul));
-    res->ntd = root;
-    res->tg = g;
 
     return res;
 }
