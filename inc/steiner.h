@@ -14,5 +14,7 @@ struct SteinerArgs {
 
 tGraph* tGraph_steiner(tGraph* g, SteinerArgs args);
 SteinerArgs* preCalculs(const char* path);
+tSolTable* tSolTable_computeSon(niceTD* ntd);
+int calculSteiner1(SteinerArgs* args);
 
 #endif

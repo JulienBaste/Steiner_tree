@@ -12,7 +12,7 @@
 
 int main(int argc, char const *argv[])
 {
-    SteinerArgs* res = preCalculs(argv[1]);
-
-    ntd_debug(res->ntd, 5);
+    SteinerArgs* args = preCalculs(argv[1]);
+    int res = calculSteiner1(args);
+    printf("%d\n", res);
 }
