@@ -290,11 +290,7 @@ tSolTable* tSolTable_forget(tSolTable* t, int f)
 
         indexNew = tSolTable_indexOf(newT, newCurrent);
 
-        if(isLast(current, newT->nbCol, current[index]))
-        {
-            newT->weights[indexNew] = Infinity;
-        }
-        else
+        if(!isLast(current, newT->nbCol, current[index]))
         {
             if(t->weights[i] < newT->weights[indexNew])
             {
