@@ -103,6 +103,7 @@ SteinerArgs* preCalculs(const char* path)
     SteinerArgs* res = malloc(sizeof(SteinerArgs));
     res->terminals = da_terminals;
     res->nbTerminals = nbTerminals;
+    res->bagSize = bagSize;
     res->ntd = root;
     res->tg = g;
 

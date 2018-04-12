@@ -8,6 +8,7 @@ typedef struct SteinerArgs SteinerArgs;
 struct SteinerArgs {
     int*    terminals;
     int     nbTerminals;
+    int     bagSize;
     niceTD* ntd;
     tGraph* tg;
 };
