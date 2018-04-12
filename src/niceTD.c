@@ -386,19 +386,13 @@ int** cmpBags(int bagSize, int* b1, int* b2)
     int** res = malloc(sizeof(int) * 2);
     int* introduce = malloc(sizeof(int) * bagSize);
     int* forget = malloc(sizeof(int) * bagSize);
-    int* parcouru = malloc(sizeof(int) * bagSize);
 
     initArray(bagSize, introduce);
     initArray(bagSize, forget);
-    initArray(bagSize, parcouru);
 
     for(i = 0; i < bagSize; i++)
     {
-        if(dichotomie(b1[i], bagSize, 0, b2) != -1)
-        {
-            parcouru[b1[i]] = 1;
-        }
-        else
+        if(dichotomie(b1[i], bagSize, 0, b2) == -1)
         {
             introduce[indexI] = b1[i];
             indexI++;
@@ -407,9 +401,11 @@ int** cmpBags(int bagSize, int* b1, int* b2)
 
     for(i = 0; i < bagSize; i++)
     {
-        if(parcouru[b2[i]] == 1) continue;
-        forget[indexF] = b2[i];
-        indexF++;
+        if(dichotomie(b2[i], bagSize, 0, b1) == -1)
+        {
+            forget[indexF] = b2[i];
+            indexF++;
+        }
     }
 
     res[0] = introduce;
