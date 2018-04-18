@@ -9,9 +9,9 @@ tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
     return g;
 }
 
-int calculSteiner1(SteinerArgs args)
+int calculSteiner1(SteinerArgs* args)
 {
-    tSolTable* res = tSolTable_computeSon(args.ntd, args);
+    tSolTable* res = tSolTable_computeSon(args->ntd, args);
 
     return res->weights[0];
 }

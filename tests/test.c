@@ -29,6 +29,8 @@ int main(int argc, char const *argv[])
     printIntArray(res[1], 3);*/
 
     SteinerArgs* args = preCalculs(argv[1]);
-    ntd_debug(args->ntd, args->bagSize);
-    /*int res = calculSteiner1(args);*/
+    //ntd_debug(args->ntd, args->bagSize);
+    int res = calculSteiner1(args);
+
+    printf("%d\n", res);
 }

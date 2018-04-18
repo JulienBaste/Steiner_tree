@@ -15,6 +15,6 @@ struct SteinerArgs {
 
 tGraph* tGraph_steiner(tGraph* g, SteinerArgs args);
 SteinerArgs* preCalculs(const char* path);
-int calculSteiner1(SteinerArgs args);
+int calculSteiner1(SteinerArgs* args);
 
 #endif

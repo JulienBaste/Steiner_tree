@@ -34,7 +34,7 @@ tSolTable* tSolTable_create(int bag[], const int size)
 }
 
 
-tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs args)
+tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs* args)
 {
     if(DEBUG)
     {
@@ -108,7 +108,7 @@ tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g,
         // 1.1 `v` ne fait pas parti de la solution
         Color(nc, v) = 0;
         index = tSolTable_indexOf(t,nc);
-        if(arraySearch(args.terminals, args.nbTerminals, v))
+        if(arraySearch(args->terminals, args->nbTerminals, v))
         {
             t->weights[index] = Infinity;
         } else {
@@ -568,7 +568,7 @@ int isFinished(int* t, int size)
     return 1;
 }
 
-tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs args)
+tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs* args)
 {
     tSolTable* left;
     tSolTable* right;
@@ -583,8 +583,8 @@ tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs args)
             int v;
             left = tSolTable_computeSon(ntd->left, args);
             tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
-            v = tmp[0][1];
-            res = tSolTable_introduce(left, v, ntd->bag, args.tg, args);
+            v = tmp[0][0];
+            res = tSolTable_introduce(left, v, ntd->bag, args->tg, args);
             free(tmp[0]);
             free(tmp[1]);
             free(tmp);

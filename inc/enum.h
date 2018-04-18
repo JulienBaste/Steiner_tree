@@ -30,12 +30,12 @@ struct tSolTable {
 
 };
 
-tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs args);
+tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs* args);
 tSolTable* tSolTable_forget(tSolTable* t, int f);
 tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2);
 tSolTable* tSolTable_feuille();
 tSolTable* tSolTable_create(int bag[], const int size);
-tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs args);
+tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs* args);
 unsigned char* tSolTable_colorTable(tSolTable* t, int i);
 int  tSolTable_indexOf(tSolTable* t, unsigned char col[]);
 void tSolTable_destroy(tSolTable* t);
