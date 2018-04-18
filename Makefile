@@ -26,9 +26,11 @@ algo1: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/Steiner1.o $(D
 	$(CC) -o $(DEXE)/algo1  $^
 # tests
 tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/uf.o
-	$(CC) -o $(DEXE)/tGraphTest $^
+	$(CC) -o $(DEXE)/tGraphTest $^ -lcunit
+ufTest: $(DOBJ)/ufTest.o $(DOBJ)/utils.o $(DOBJ)/uf.o
+	$(CC) -o $(DEXE)/ufTest $^ -lcunit
 enumTest: $(DOBJ)/enumTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o
-	$(CC) -o $(DEXE)/enumTest  $^
+	$(CC) -o $(DEXE)/enumTest $^
 	
 
 clean:

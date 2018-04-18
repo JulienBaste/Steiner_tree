@@ -1,9 +1,10 @@
 SECTION Graph
 Nodes 8
 Edges 11
-E 1 2 1
-E 1 3 1
+E 1 2 7
+E 1 3 3
 E 1 4 5
+E 2 3 2
 E 2 5 1
 E 3 4 1
 E 4 5 1
@@ -18,7 +19,6 @@ SECTION Terminals
 Terminals 3
 T 2
 T 3
-T 7
 END
 
 SECTION Tree Decomposition

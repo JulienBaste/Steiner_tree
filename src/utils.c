@@ -33,7 +33,7 @@ void next_mask(int mask[], const int size)
 	}
 }
 
-int arraySearch(int array[], const int size, const int val)
+int intArraySearch(int array[], const int size, const int val)
 {
 	int i = 0;
 	while(i < size) if(array[i++] == val) return 1;
@@ -80,15 +80,17 @@ void quickSort(int arr[], const int size)
 
 long bellNumber(int n)
 {
+   int i,j;
+
    long bell[n+1][n+1];
    bell[0][0] = 1;
-   for (int i=1; i<=n; i++)
+   for (i=1; i<=n; i++)
    {
       // Explicitly fill for j = 0
       bell[i][0] = bell[i-1][i-1];
 
       // Fill for remaining values of j
-      for (int j=1; j<=i; j++)
+      for (j=1; j<=i; j++)
          bell[i][j] = bell[i-1][j-1] + bell[i][j-1];
    }
    return bell[n][0];
@@ -103,6 +105,27 @@ void printIntArray(int t[], const int size)
         printf("%d ", t[i]);
     }
     printf("\n");
+}
+
+int intArrayCmp(int arr1[], int arr2[], const int size)
+{
+	int i;
+	for(i=0; i<size; i++)
+	{
+		if(arr1[i] != arr2[i]) return 0;
+	}
+	return 1;
+}
+
+void printCharArray(unsigned char* arr, const int size)
+{
+	int i;
+	printf("[");
+	for(i = 0; i < size; i++)
+	{
+		printf(" %d", arr[i]);
+	}
+	printf(" ]\n");
 }
 
 int dichotomie(int value, int size, int res, int* tab)

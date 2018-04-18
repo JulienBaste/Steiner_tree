@@ -25,11 +25,13 @@ UF* UF_create(const int size)
 UF* UF_clone(UF* uf)
 {
 	UF* nuf = (UF*) malloc(sizeof(UF));
+	nuf->parent = (int*) malloc(sizeof(int) * (uf->size + 1));
+	nuf->rank = (int*) malloc(sizeof(int) * (uf->size + 1));
 	memcpy(nuf->parent, uf->parent, sizeof(int) * (uf->size + 1));
 	memcpy(nuf->rank, uf->rank, sizeof(int) * (uf->size + 1));
 	nuf->size = uf->size;
-	nuf->nbClass = uf->nbClass;
-	nuf->cls = uf->cls;
+	nuf->nbClass = uf->size;
+	nuf->cls = NULL;
 	return nuf;
 }
 
@@ -55,8 +57,6 @@ void UF_cunion(UF* uf, int x, int y)
 	{
 		uf->parent[xroot] = yroot;
 	}
-
-	uf->nbClass--;
 }
 
 void UF_union(UF* uf, int x, int y)
@@ -77,8 +77,6 @@ void UF_union(UF* uf, int x, int y)
 			uf->rank[xroot]++;
 		}
 	}
-
-	uf->nbClass--;
 }
 
 // doit vraiment être optimiser
@@ -94,6 +92,8 @@ void UF_buildClasses(UF* uf)
 	for(i = 1; i <= uf->size; i++)
 	{
 		c = UF_find(uf,i);
+
+		if(c == 0) continue;
 
 		if(val[c] == 0)
 		{
@@ -114,6 +114,9 @@ void UF_buildClasses(UF* uf)
 			uf->cls[val[c] - 1].elements[uf->cls[val[c] - 1].size++] = i;
 		}
 	}
+
+	uf->cls = realloc(uf->cls, ci * sizeof(Class));
+	uf->nbClass = ci;
 
 	for(i = 0; i < uf->nbClass; i++)
 	{
