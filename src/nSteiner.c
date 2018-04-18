@@ -14,13 +14,10 @@ tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
 	tGraph* steiner = NULL;
 	// Mask: pour générer les combinaisons
 	int *mask = NULL;
-	// Pour stocker le résultat de l'exploration d'un Graphe
-	int *expl = NULL;
-	int a, size;
+	//
+	int size;
 	long min_b, b;
 
-	// exploration à partir de 'a'
-	a = args.terminals[0];
 	// le poids associer est infinity
 	min_b = INT_MAX;
 	// initialiser le masque utiliser pour générer les différents sous-graphe
@@ -30,14 +27,11 @@ tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
 	next_mask(mask,size);
 	// un sous-graphe au maximum contient g->nodes sommets
 	sg = tGraph_create(g->nodes);
-	edges = tGraph_edges_of(g);
-	// au maximum on explore tout les noeuds
-	expl = malloc(sizeof(int) * g->nodes);
+	edges = tGraph_edges(g);
 
 	while(mask_contains(mask,size,1))
 	{
 		tGraph_associated_graph(g, edges, g->edges, mask, sg);
-		tGraph_explore(sg, a, expl);
 		if(tGraph_belongs_to_tree(sg, args.terminals, args.nbTerminals))
 		{
 			b = tGraph_weight(sg);
@@ -48,7 +42,6 @@ tGraph* tGraph_steiner(tGraph* g, SteinerArgs args)
 			}
 		}
 		next_mask(mask,size);
-
 	}
 
 	return steiner;

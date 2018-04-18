@@ -1,11 +1,11 @@
-# Paths
+# Pathes
 DSRC = src
 DINC = inc
 DOBJ = obj
 DEXE = exe
 DTST = tests
 # Compiler flags
-CFLAGS = -I$(DINC) -Wall -g
+CFLAGS = -I$(DINC) -Wall
 # Commands
 CC = gcc $(CFLAGS)
 # How to make Objects
@@ -26,9 +26,11 @@ algo1: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/Steiner1.o $(D
 	$(CC) -o $(DEXE)/algo1  $^
 # tests
 tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/uf.o
-	$(CC) -o $(DEXE)/tGraphTest $^
+	$(CC) -o $(DEXE)/tGraphTest $^ -lcunit
+ufTest: $(DOBJ)/ufTest.o $(DOBJ)/utils.o $(DOBJ)/uf.o
+	$(CC) -o $(DEXE)/ufTest $^ -lcunit
 enumTest: $(DOBJ)/enumTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/enum.o $(DOBJ)/uf.o
-	$(CC) -o $(DEXE)/enumTest  $^
+	$(CC) -o $(DEXE)/enumTest $^
 test: $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/uf.o $(DOBJ)/utils.o $(DOBJ)/niceTD.o $(DOBJ)/enum.o $(DOBJ)/Steiner1.o $(DOBJ)/test.o
 	$(CC) -o $(DEXE)/test $^
 

@@ -9,13 +9,11 @@
 
 
 // private operations
-void _sort(tEdge a[], int l, int r);
+void sort_edges(tEdge a[], int l, int r);
 int  _partition(tEdge a[], int l, int r);
+void rec_explore(tGraph* g, int a, int b, int* v);
 
 
-
-
-// création d'un graphe à n sommets
 tGraph* tGraph_create(int nodes)
 {
 	tGraph* g = malloc(sizeof(tGraph));
@@ -33,7 +31,7 @@ void tGraph_destroy(tGraph* g)
 	free(g);
 }
 
-// génerer un graphe aléatoire
+
 tGraph* tGraph_generate(int nodes)
 {
 	tGraph* g = tGraph_create(nodes);
@@ -48,7 +46,6 @@ tGraph* tGraph_generate(int nodes)
 	return g;
 }
 
-// créer une copie du graphe
 tGraph* tGraph_copy(tGraph* g)
 {
 	int a,b;
@@ -67,7 +64,6 @@ long tGraph_weight(tGraph* g)
 
 	For_Graph_Edge(g,a,b)
 		w += Get_Edge(g,a,b);
-
 
 	return w;
 }
@@ -118,7 +114,7 @@ void tGraph_as_ost(tGraph* g, const char* path)
 	FILE* out = fopen(path,"w");
 	if(out == NULL)
 	{
-		perror("fopen");
+		perror("fopen:");
 		exit(EXIT_FAILURE);
 	}
 	int a,b;
@@ -131,7 +127,7 @@ void tGraph_as_ost(tGraph* g, const char* path)
 	fclose(out);
 }
 
-tEdge* tGraph_edges_of(tGraph* g)
+tEdge* tGraph_edges(tGraph* g)
 {
 	int a,b,i;
 	tEdge e;
@@ -149,7 +145,81 @@ tEdge* tGraph_edges_of(tGraph* g)
 	return t;
 }
 
-// hypothèse: nodes[] est triée
+int* tGraph_explore(tGraph* g, int a)
+{
+	int* v = malloc(sizeof(int) * g->nodes);
+	memset(v, 0, sizeof(int) * g->nodes);
+
+	int  b;
+	// le noeud a est visité
+	v[a-1] = 1;
+	// visiter les successeurs de a
+	For_Neighbor_Of(g,a,b) { rec_explore(g,b,a,v); }
+
+	return v;
+}
+
+char tGraph_isTree(tGraph* g)
+{
+	int i, *visited, ret = 1;
+
+	visited = tGraph_explore(g, 1);
+	for(i = 0; i<g->nodes; i++)
+	{
+		if(visited[i] == 0 || visited[i] > 1)
+		{
+			ret = 0; break;
+		}
+	}
+	free(visited);
+	return ret;
+}
+
+tGraph* tGraph_reduce(tGraph*g, int nodes[], const int size)
+{
+	int a, b, k, val;
+	tGraph* sg = tGraph_create(size);
+	k = 0;
+	For_Possible_Edge(sg,a,b)
+	{
+		val = Get_Edge(g, nodes[a-1], nodes[b-1]);
+		Set_Edge(sg, a, b, val);
+		if(val != 0) k++;
+	}
+	sg->edges = k;
+	return sg;
+}
+
+tEdge* tGraph_mst(tGraph* g, int* mstSize)
+{
+	tEdge *mst = NULL, *edges = NULL, e;
+	UF* uf = NULL;
+	int i,k;
+
+	edges = tGraph_edges(g);
+	sort_edges(edges, 0, g->edges - 1); // sort edges from index 0 to the last
+	mst = malloc(sizeof(tEdge) * g->edges);
+	uf = UF_create(g->nodes); // Kruskal with union-find data structure
+
+	k = 0;
+	for(i=0; i<g->edges; i++)
+	{
+		e = edges[i];
+		if(UF_find(uf, e.x) != UF_find(uf, e.y))
+		{
+			mst[k++] = e;
+			UF_union(uf, e.x, e.y);
+		}
+	}
+	mst = realloc(mst, sizeof(tEdge) * k);
+	*mstSize = k;
+
+
+	free(edges);
+	UF_destroy(uf);
+	return mst;
+}
+
 tEdge* tGraph_edgesOfNodes(tGraph* g, int nodes[], const int size, int* nbEdges)
 {
 	int a, b, i; tEdge e; tEdge* edges; int ecount;
@@ -163,7 +233,7 @@ tEdge* tGraph_edgesOfNodes(tGraph* g, int nodes[], const int size, int* nbEdges)
 		For_Succ_Of(g,a,b)
 		{
 			// a optimiser
-			if(arraySearch(nodes, size, b))
+			if(intArraySearch(nodes, size, b))
 			{
 				e.x = a; e.y = b; e.val = Get_Edge(g,a,b);
 				edges[ecount++] = e;
@@ -177,6 +247,7 @@ tEdge* tGraph_edgesOfNodes(tGraph* g, int nodes[], const int size, int* nbEdges)
 	return edges;
 }
 
+
 tEdge* tGraph_mstOfNodes(tGraph* g, int nodes[], const int size, int maxVal, int* rSize)
 {
 	int nbEdges, i, k;
@@ -184,7 +255,7 @@ tEdge* tGraph_mstOfNodes(tGraph* g, int nodes[], const int size, int maxVal, int
 	UF* uf;
 
 	edges = tGraph_edgesOfNodes(g, nodes, size, &nbEdges);
-	_sort(edges, 0, nbEdges - 1);
+	sort_edges(edges, 0, nbEdges - 1);
 	mst = malloc(sizeof(tEdge) * nbEdges);
 	uf  = UF_create(maxVal);
 
@@ -206,52 +277,14 @@ tEdge* tGraph_mstOfNodes(tGraph* g, int nodes[], const int size, int maxVal, int
 	return mst;
 }
 
-void rec_explore(tGraph* g, int a, int b, int* v);
-
-// parcourir le graphe à partir du noeud 'a'
-// 'v' ensemble des noeuds visités
-// hypothèse: size(v) == g->nodes
-void tGraph_explore(tGraph* g, int a, int* v)
-{
-	int i;
-	int  b;
-	// init the table of visited nodes
-	for(i=0;i<g->nodes;i++) v[i] = 0;
-	// le noeud a est visité
-	v[a-1] = 1;
-	// visiter les successeurs de a
-	For_Neighbor_Of(g,a,b) { rec_explore(g,b,a,v); }
-
-}
-
-
-void rec_explore(tGraph* g, int a, int b,int* v)
-{
-	int c;
-
-	v[a-1] += 1;
-	if(v[a-1] == 1) {
-		For_Neighbor_Of(g,a,c) if(c != b) { rec_explore(g,c,a,v); }
-	}
-}
-
 
 char tGraph_belongs_to_tree(tGraph* g, int nodes[], const int size)
 {
-	int i;
-	// pour connaitre les noeuds visiter dans un parcours
-	int* visited = malloc(sizeof(int) * g->nodes);
-	memset(visited, 0, g->nodes * sizeof(int));
-	// parcours
-	tGraph_explore(g,nodes[0],visited);
-	for(i = 0; i<size; i++)
-	{
-		if(visited[nodes[i] - 1] == 0 || visited[nodes[i] - 1] > 1) return 0;
-	}
+	int ret;
+	tGraph* sg = tGraph_reduce(g, nodes, size);
 	return 1;
 }
 
-// graphe associer à un masque
 void tGraph_associated_graph(tGraph* g, tEdge* edges, const int nbEdges,const  int* mask, tGraph* sg)
 {
 	int i;
@@ -261,26 +294,22 @@ void tGraph_associated_graph(tGraph* g, tEdge* edges, const int nbEdges,const  i
 	}
 }
 
-tGraph* tGraph_reduce(tGraph*g, int nodes[], const int size)
-{
-	int a, b, k, val;
-	tGraph* sg = tGraph_create(size);
-	k = 0;
-	For_Possible_Edge(sg,a,b)
-	{
-		val = Get_Edge(g, nodes[a-1], nodes[b-1]);
-		Set_Edge(sg, a, b, val);
-		if(val != 0) k++;
-	}
-	sg->edges = k;
-	return sg;
-}
+
 
 
 // private operations
 
+void rec_explore(tGraph* g, int a, int b, int* v)
+{
+	int c;
 
-void _sort(tEdge a[], int l, int r)
+	v[a-1] += 1;
+	if(v[a-1] == 1) {
+		For_Neighbor_Of(g,a,c) if(c != b) { rec_explore(g,c,a,v); }
+	}
+}
+
+void sort_edges(tEdge a[], int l, int r)
 {
    int j;
 
@@ -288,8 +317,8 @@ void _sort(tEdge a[], int l, int r)
    {
    	// divide and conquer
         j = _partition( a, l, r);
-       _sort( a, l, j-1);
-       _sort( a, j+1, r);
+       sort_edges( a, l, j-1);
+       sort_edges( a, j+1, r);
    }
 }
 
