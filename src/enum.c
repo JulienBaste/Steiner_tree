@@ -568,7 +568,7 @@ int isFinished(int* t, int size)
     return 1;
 }
 
-tSolTable* tSolTable_computeSon(niceTD* ntd)
+tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs args)
 {
     tSolTable* left;
     tSolTable* right;
@@ -579,14 +579,23 @@ tSolTable* tSolTable_computeSon(niceTD* ntd)
         case 0: return tSolTable_create(NULL, 0);
         case 1:
         {
-            left = tSolTable_computeSon(ntd->left);
+            int** tmp;
+            int v;
+            left = tSolTable_computeSon(ntd->left, args);
+            tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
+            v = tmp[0][1];
+            res = tSolTable_introduce(left, v, ntd->bag, args.tg, args);
+            free(tmp[0]);
+            free(tmp[1]);
+            free(tmp);
+            tSolTable_destroy(left);
             break;
         }
         case 2:
         {
             int** tmp;
             int f;
-            left = tSolTable_computeSon(ntd->left);
+            left = tSolTable_computeSon(ntd->left, args);
             tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
             f = tmp[1][0];
             res = tSolTable_forget(left, f);
@@ -594,16 +603,18 @@ tSolTable* tSolTable_computeSon(niceTD* ntd)
             free(tmp[1]);
             free(tmp);
             tSolTable_destroy(left);
-            return res;
+            break;
         }
         case 3:
         {
-            left = tSolTable_computeSon(ntd->left);
-            right = tSolTable_computeSon(ntd->right);
+            left = tSolTable_computeSon(ntd->left, args);
+            right = tSolTable_computeSon(ntd->right, args);
             res = tSolTable_join(left, right);
             tSolTable_destroy(left);
             tSolTable_destroy(right);
-            return res;
+            break;
         }
     }
+
+    return res;
 }

@@ -16,7 +16,7 @@ $(DOBJ)/%.o: $(DTST)/%.c
 	$(CC) -o $@ -c $<
 # Targets
 
-all: naive algo1
+all: naive algo1 test
 
 # naive algo
 naive: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/uf.o $(DOBJ)/tGraph.o $(DOBJ)/nSteiner.o $(DOBJ)/naive.o
