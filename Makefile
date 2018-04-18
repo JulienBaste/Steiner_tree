@@ -19,13 +19,13 @@ $(DOBJ)/%.o: $(DTST)/%.c
 all: naive algo1
 
 # naive algo
-naive: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/nSteiner.o $(DOBJ)/naive.o
+naive: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/uf.o $(DOBJ)/tGraph.o $(DOBJ)/nSteiner.o $(DOBJ)/naive.o
 	$(CC) -o $(DEXE)/naive  $^
 # algo of the paper
 algo1: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/tGraph.o $(DOBJ)/Steiner1.o $(DOBJ)/enum.o $(DOBJ)/uf.o $(DOBJ)/algo1.o
 	$(CC) -o $(DEXE)/algo1  $^
 # tests
-tGraphTest: $(DOBJ)/tGraphTest.o $(DOBJ)/amatrix.o $(DOBJ)/tGraph.o $(DOBJ)/utils.o $(DOBJ)/uf.o
+tGraphTest: $(DOBJ)/amatrix.o $(DOBJ)/utils.o $(DOBJ)/uf.o $(DOBJ)/tGraph.o $(DOBJ)/tGraphTest.o
 	$(CC) -o $(DEXE)/tGraphTest $^ -lcunit
 ufTest: $(DOBJ)/ufTest.o $(DOBJ)/utils.o $(DOBJ)/uf.o
 	$(CC) -o $(DEXE)/ufTest $^ -lcunit

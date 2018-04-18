@@ -11,6 +11,8 @@
 #define Infinity LONG_MAX
 #define DEBUG 0
 
+#define Color(tab, c) tab[c - 1]
+
 unsigned char* tSolTable_colorTable(tSolTable* t, int i)
 {
     return t->colors + i * t->nbCol;
@@ -34,225 +36,225 @@ tSolTable* tSolTable_create(int bag[], const int size)
 
 tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g, SteinerArgs args)
 {
-	if(DEBUG)
-	{
-		printf("tSolTable introduce vertex %d \n\n",v);
-	}
-	// calculer la taille du Sac
-	const int bag_size = childTab->nbCol + 1;
-	// créer la table du Sac ( allocation memoire )
-	tSolTable* t = tSolTable_create(bag, bag_size);
-	// génerer les coleurs et un index pour la table
-	tSolTable_generate(t);
+    if(DEBUG)
+    {
+        printf("tSolTable introduce vertex %d \n\n",v);
+    }
+    // calculer la taille du Sac
+    const int bag_size = childTab->nbCol + 1;
+    // créer la table du Sac ( allocation memoire )
+    tSolTable* t = tSolTable_create(bag, bag_size);
+    // génerer les coleurs et un index pour la table
+    tSolTable_generate(t);
 
-	// pour chaque coleur du fils, génerer les coleurs du père
+    // pour chaque coleur du fils, génerer les coleurs du père
 
-	// previous color
-	unsigned char* pc = NULL;
-	// new color
-	unsigned char* nc = malloc(bag_size * sizeof(unsigned char));
+    // previous color
+    unsigned char* pc = NULL;
+    // new color
+    unsigned char* nc = malloc(bag_size * sizeof(unsigned char));
 
-	int  i, j, k, l, c; // for loops
-	int  index; // index of a coloration
-	int  vn; // neighbor of `v`
-	int  vn_size; // edges of `v`
-	int* vns; // neighbors of `v`
-	UF  *cps = NULL, *nCps = NULL; // composantes induites par la coloration
-	tGraph* sg = NULL; // sous-garphe associé au sac
-	tGraph* cg = NULL; // le sous-graphe associé à une composante
-	int* mask = NULL; // masque utiliser pour la génération des combinaisons
-	tEdge* mst = NULL;
-	int mst_size;
-	long w;
-	int flag;
+    int  i, j, k, l, c; // for loops
+    int  index; // index of a coloration
+    int  vn; // neighbor of `v`
+    int  vn_size; // edges of `v`
+    int* vns; // neighbors of `v`
+    UF  *cps = NULL, *nCps = NULL; // composantes induites par la coloration
+    tGraph* sg = NULL; // sous-garphe associé au sac
+    tGraph* cg = NULL; // le sous-graphe associé à une composante
+    int* mask = NULL; // masque utiliser pour la génération des combinaisons
+    tEdge* mst = NULL;
+    int mst_size;
+    long w;
+    int flag;
 
-	i = 0;
+    i = 0;
 
-	while(i < childTab->nbLine)
-	{
-		pc = tSolTable_colorTable(childTab,i);
+    while(i < childTab->nbLine)
+    {
+        pc = tSolTable_colorTable(childTab,i);
 
-		if(DEBUG)
-		{
-			printf("1. adaptation de l'ancienne coloration \n");
-			printf("ancienne coloration : ");
-			printCharArray(pc, childTab->nbCol);
-		}
+        if(DEBUG)
+        {
+            printf("1. adaptation de l'ancienne coloration \n");
+            printf("ancienne coloration : ");
+            printCharArray(pc, childTab->nbCol);
+        }
 
-		// adapter `pc` pour `nc`
-		for(c = 1; c != v; c++)
-		{
-			Color(nc, c) = Color(pc, c);
-		}
-		for(c = v; c <= childTab->nbCol; c++)
-		{
-			if(Color(pc, c) >= v) Color(nc, c+1) = Color(pc, c) + 1;
-			else
-				Color(nc, c+1) = Color(pc, c);
-		}
+        // adapter `pc` pour `nc`
+        for(c = 1; c != v; c++)
+        {
+            Color(nc, c) = Color(pc, c);
+        }
+        for(c = v; c <= childTab->nbCol; c++)
+        {
+            if(Color(pc, c) >= v) Color(nc, c+1) = Color(pc, c) + 1;
+            else
+                Color(nc, c+1) = Color(pc, c);
+        }
 
-		Color(nc , v) = v;
+        Color(nc , v) = v;
 
-		if(DEBUG)
-		{
-			printf("nouvelle coloration : ");
-			printCharArray(nc, bag_size);
-			printf("\n\n");
-		}
+        if(DEBUG)
+        {
+            printf("nouvelle coloration : ");
+            printCharArray(nc, bag_size);
+            printf("\n\n");
+        }
 
 
-		// cas 1: `v` ne change pas les composantes
+        // cas 1: `v` ne change pas les composantes
 
-		// 1.1 `v` ne fait pas parti de la solution
-		Color(nc, v) = 0;
-		index = tSolTable_indexOf(t,nc);
-		if(intArraySearch(args.terminals, args.nbTerminals, v))
-		{
-			t->weights[index] = Infinity;
-		} else {
-			t->weights[index] = childTab->weights[i];
-		}
-		// 1.2 `v` est tout seul dans sa composante
-		Color(nc, v) = v;
-		index = tSolTable_indexOf(t,nc);
-		t->weights[index] = childTab->weights[i];
+        // 1.1 `v` ne fait pas parti de la solution
+        Color(nc, v) = 0;
+        index = tSolTable_indexOf(t,nc);
+        if(arraySearch(args.terminals, args.nbTerminals, v))
+        {
+            t->weights[index] = Infinity;
+        } else {
+            t->weights[index] = childTab->weights[i];
+        }
+        // 1.2 `v` est tout seul dans sa composante
+        Color(nc, v) = v;
+        index = tSolTable_indexOf(t,nc);
+        t->weights[index] = childTab->weights[i];
 
-		// cas 2. `v` change les composantes
+        // cas 2. `v` change les composantes
 
-		// le sous-graphe associer au Sac
-		sg = tGraph_reduce(g, bag, bag_size);
-		// les différentes composantes selon la coloration `pc` dans `sg`
-		cps = UF_create(bag_size);
-		for(c = 1; c <= bag_size; c++)
-		{
-			UF_cunion(cps, c, Color(nc, c));
-		}
+        // le sous-graphe associer au Sac
+        sg = tGraph_reduce(g, bag, bag_size);
+        // les différentes composantes selon la coloration `pc` dans `sg`
+        cps = UF_create(bag_size);
+        for(c = 1; c <= bag_size; c++)
+        {
+            UF_cunion(cps, c, Color(nc, c));
+        }
 
-		if(DEBUG)
-		{
-			UF_buildClasses(cps);
-			printf("la coloration: ");
-			printCharArray(nc, bag_size);
-			printf("à céer %d composantes \n", cps->nbClass);
-			printf("liste des composantes: \n");
-			for(l = 0; l < cps->nbClass; l++)
-			{
-				printf("class with root: %d \n",cps->cls[l].elements[0]);
-				printf("class elements: ");
-				printIntArray(cps->cls[l].elements, cps->cls[l].size);
-				printf("\n");
-			}
-		}
-		// toute les colorations possible de v
-		for(c = 1; c != v; c++)
-		{
-			Color(nc, v) = Color(nc, c);
-			if(Color(nc,v) == 0) continue;
-			nCps = UF_clone(cps);
-			UF_cunion(nCps, v, Color(nc, c));
-			UF_buildClasses(nCps);
-			index = tSolTable_indexOf(t,nc);
-			t->weights[index] = 0;
-			for(j = 0; j < nCps->nbClass; j++)
-			{
-				if(nCps->cls[j].elements[0] == 0) continue;
+        if(DEBUG)
+        {
+            UF_buildClasses(cps);
+            printf("la coloration: ");
+            printCharArray(nc, bag_size);
+            printf("à céer %d composantes \n", cps->nbClass);
+            printf("liste des composantes: \n");
+            for(l = 0; l < cps->nbClass; l++)
+            {
+                printf("class with root: %d \n",cps->cls[l].elements[0]);
+                printf("class elements: ");
+                printIntArray(cps->cls[l].elements, cps->cls[l].size);
+                printf("\n");
+            }
+        }
+        // toute les colorations possible de v
+        for(c = 1; c != v; c++)
+        {
+            Color(nc, v) = Color(nc, c);
+            if(Color(nc,v) == 0) continue;
+            nCps = UF_clone(cps);
+            UF_cunion(nCps, v, Color(nc, c));
+            UF_buildClasses(nCps);
+            index = tSolTable_indexOf(t,nc);
+            t->weights[index] = 0;
+            for(j = 0; j < nCps->nbClass; j++)
+            {
+                if(nCps->cls[j].elements[0] == 0) continue;
 
-				cg = tGraph_reduce(sg, nCps->cls[j].elements, nCps->cls[j].size);
+                cg = tGraph_reduce(sg, nCps->cls[j].elements, nCps->cls[j].size);
 
-				if(tGraph_isTree(cg))
-				{
-					mst = tGraph_mst(cg, &mst_size);
-					w = 0;
-					for(l = 0; l < mst_size; l++)
-					{
-						w += mst[l].val;
-					}
-					t->weights[index] += w;
-				}
-				else
-				{
-					t->weights[index] = Infinity;
-					break;
-				}
-				tGraph_destroy(cg);
-			}
-		}
+                if(tGraph_isTree(cg))
+                {
+                    mst = tGraph_mst(cg, &mst_size);
+                    w = 0;
+                    for(l = 0; l < mst_size; l++)
+                    {
+                        w += mst[l].val;
+                    }
+                    t->weights[index] += w;
+                }
+                else
+                {
+                    t->weights[index] = Infinity;
+                    break;
+                }
+                tGraph_destroy(cg);
+            }
+        }
 
-		// coloration induites par les sommets adjacents à `v`
+        // coloration induites par les sommets adjacents à `v`
 
-		// liste des sommets adjacents à v
-		vns = malloc(sizeof(int) * (sg->nodes - 1));
-		vn_size = 0;
-		flag = 1;
-		For_Neighbor_Of(sg,v,vn)
-		{
-			// solution impossible, prendre l'arête d'un sommet non accépté dans la solution
-			if(Color(nc, vn) == 0) { flag = 0; break;}
-			vns[vn_size++] = vn;
-		}
+        // liste des sommets adjacents à v
+        vns = malloc(sizeof(int) * (sg->nodes - 1));
+        vn_size = 0;
+        flag = 1;
+        For_Neighbor_Of(sg,v,vn)
+        {
+            // solution impossible, prendre l'arête d'un sommet non accépté dans la solution
+            if(Color(nc, vn) == 0) { flag = 0; break;}
+            vns[vn_size++] = vn;
+        }
 
-		if(flag)
-		{
-			vns = realloc(vns, vn_size * sizeof(int));
-			// créer le mask
-			mask = malloc(sizeof(int) * vn_size);
-			// 1. cas ou aucune arêtes n'est prise
-			init_mask(mask, vn_size);
-			// 2. les autres cas
-			k = 1;
-			// toute les combinaisons possible
-			while(k < 1 << vn_size)
-			{
-				next_mask(mask, vn_size);
-				nCps = UF_clone(cps);
-				for(j = 0; j < vn_size; j++)
-				{
-					if(mask[j] == 0) continue;
-					UF_cunion(nCps, v, Color(pc, vns[j]));
-				}
-				UF_buildClasses(nCps);
+        if(flag)
+        {
+            vns = realloc(vns, vn_size * sizeof(int));
+            // créer le mask
+            mask = malloc(sizeof(int) * vn_size);
+            // 1. cas ou aucune arêtes n'est prise
+            init_mask(mask, vn_size);
+            // 2. les autres cas
+            k = 1;
+            // toute les combinaisons possible
+            while(k < 1 << vn_size)
+            {
+                next_mask(mask, vn_size);
+                nCps = UF_clone(cps);
+                for(j = 0; j < vn_size; j++)
+                {
+                    if(mask[j] == 0) continue;
+                    UF_cunion(nCps, v, Color(pc, vns[j]));
+                }
+                UF_buildClasses(nCps);
 
-				Color(nc, v) = UF_find(nCps, v);
-				index = tSolTable_indexOf(t,nc);
-				t->weights[index] = 0;
+                Color(nc, v) = UF_find(nCps, v);
+                index = tSolTable_indexOf(t,nc);
+                t->weights[index] = 0;
 
-				for(j = 0; j < nCps->nbClass; j++)
-				{
-					if(nCps->cls[j].elements[0] == 0) continue;
+                for(j = 0; j < nCps->nbClass; j++)
+                {
+                    if(nCps->cls[j].elements[0] == 0) continue;
 
-					cg = tGraph_reduce(sg, nCps->cls[j].elements, nCps->cls[j].size);
+                    cg = tGraph_reduce(sg, nCps->cls[j].elements, nCps->cls[j].size);
 
-					if(tGraph_isTree(cg))
-					{
-						mst = tGraph_mst(cg, &mst_size);
-						w = 0;
-						for(l = 0; l < mst_size; l++)
-						{
-							w += mst[l].val;
-						}
-						t->weights[index] += w;
-					}
-					else
-					{
-						t->weights[index] = Infinity;
-						break;
-					}
-					tGraph_destroy(cg);
-				}
-				//UF_destroy(nCps);
-				k++;
-			}
-			free(mask);
-			//UF_destroy(cps);
-		}
-		free(vns);
-		tGraph_destroy(sg);
-		i++;
-	}
-	//
+                    if(tGraph_isTree(cg))
+                    {
+                        mst = tGraph_mst(cg, &mst_size);
+                        w = 0;
+                        for(l = 0; l < mst_size; l++)
+                        {
+                            w += mst[l].val;
+                        }
+                        t->weights[index] += w;
+                    }
+                    else
+                    {
+                        t->weights[index] = Infinity;
+                        break;
+                    }
+                    tGraph_destroy(cg);
+                }
+                //UF_destroy(nCps);
+                k++;
+            }
+            free(mask);
+            //UF_destroy(cps);
+        }
+        free(vns);
+        tGraph_destroy(sg);
+        i++;
+    }
+    //
 
-	//tSolTable_destroy(childTab);
-	return t;
+    //tSolTable_destroy(childTab);
+    return t;
 }
 
 int tSolTable_indexOf(tSolTable* t, unsigned char col[])

@@ -111,6 +111,17 @@ void printIntArray(int t[], const int size)
     printf("\n");
 }
 
+void printCharArray(unsigned char t[], const int size)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        printf("%c\n", t[i]);
+    }
+    printf("\n");
+}
+
 int dichotomie(int value, int size, int res, int* tab)
 {
     if(size == 1)
