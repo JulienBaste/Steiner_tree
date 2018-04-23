@@ -346,7 +346,7 @@ tSolTable* tSolTable_forget(tSolTable* t, int f)
     int i;
     int j;
     int indexNew;
-    int index = dichotomie(f, t->nbCol, 0, t->vertices);
+    int index = recherche(f, t->nbCol, t->vertices);
     int* newBag = malloc(sizeof(int) * t->nbCol - 1);
     unsigned char* current;
     unsigned char* newCurrent = malloc(sizeof(unsigned char) * t->nbCol - 1);
@@ -579,26 +579,26 @@ tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs* args)
         case 0: return tSolTable_create(NULL, 0);
         case 1:
         {
-            int** tmp;
-            int v;
+            /*int** tmp;
+            int v;*/
             left = tSolTable_computeSon(ntd->left, args);
-            tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
+            left->vertices = ntd->bag;
+            /*tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
             v = tmp[0][0];
             res = tSolTable_introduce(left, v, ntd->bag, args->tg, args);
             free(tmp[0]);
             free(tmp[1]);
             free(tmp);
-            tSolTable_destroy(left);
+            tSolTable_destroy(left);*/
+            res = left;
             break;
         }
         case 2:
         {
             int** tmp;
-            int f;
             left = tSolTable_computeSon(ntd->left, args);
             tmp = cmpBags(left->nbCol, left->vertices, ntd->bag);
-            f = tmp[1][0];
-            res = tSolTable_forget(left, f);
+            res = tSolTable_forget(left, tmp[0][0]);
             free(tmp[0]);
             free(tmp[1]);
             free(tmp);

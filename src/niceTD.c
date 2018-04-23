@@ -384,7 +384,7 @@ int** cmpBags(int bagSize, int* b1, int* b2)
     int i;
     int indexI = 0;
     int indexF = 0;
-    int** res = malloc(sizeof(int) * 2);
+    int** res = malloc(sizeof(int*) * 2);
     int* introduce = malloc(sizeof(int) * bagSize);
     int* forget = malloc(sizeof(int) * bagSize);
 

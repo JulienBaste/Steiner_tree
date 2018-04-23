@@ -41,7 +41,7 @@ int arraySearch(int array[], const int size, const int val)
 
 // QuickSort
 
-int partition( int a[], int l, int r)
+int partition(int a[], int l, int r)
 {
    int pivot, i, j, t;
    pivot = a[l];
@@ -51,9 +51,10 @@ int partition( int a[], int l, int r)
    {
        if(pivot != 0)
        {
-           do ++i; while(a[i] <= pivot && a[i] != 0 && i <= r);
+           do ++i; while(i <= r && a[i] <= pivot && a[i] != 0);
            do --j; while(a[j] > pivot || a[j] == 0);
-       } else
+       }
+       else
        {
            do ++i; while(i <= r);
            --j;
@@ -143,6 +144,19 @@ int dichotomie(int value, int size, int res, int* tab)
         memcpy(tmp, &tab[i], (i+size%2) * sizeof(int));
         return dichotomie(value, i+size%2, res+i, tmp);
     }
+}
+
+int recherche(int value, int size, int* tab)
+{
+    int i;
+
+    for(i = 0; i < size; i++)
+    {
+        if(tab[i] == 0) break;
+        if(tab[i] == value) return i;
+    }
+
+    return -1;
 }
 
 int* triFusion(int size, int* tab)

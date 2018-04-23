@@ -21,5 +21,6 @@ void copyArray(int size, int* t1, int* t2);
 void initArray(int size, int* array);
 int nextZero(int size, int* array);
 void printCharArray(unsigned char t[], const int size);
+int recherche(int value, int size, int* tab);
 
 #endif
