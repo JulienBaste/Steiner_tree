@@ -10,7 +10,7 @@
 #include "amatrix.h"
 
 #define Infinity LONG_MAX
-#define DEBUG 0
+#define DEBUG 1
 
 #define Color(tab, c) tab[c - 1]
 
@@ -30,10 +30,11 @@ tSolTable* tSolTable_create(int bag[], const int size)
 	t->weights = malloc(sizeof(unsigned long) * t->nbLine);
 	t->colors  = malloc(sizeof(unsigned char) * t->nbLine * t->nbCol);
 	t->index = NULL;
+
 	int i = 0;
 	while(i < t->nbLine)
 	{
-		t->weights[i] = -1;
+		t->weights[i] = Infinity;
 		i++;
 	}
 
@@ -136,7 +137,6 @@ tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g,
 		{
 			UF_cunion(cps, c, Color(nc, c));
 		}
-
 		if(DEBUG)
 		{
 			UF_buildClasses(cps);
@@ -186,7 +186,6 @@ tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g,
 				tGraph_destroy(cg);
 			}
 		}
-
 		// coloration induites par les sommets adjacents à `v`
 
 		// liste des sommets adjacents à v
@@ -248,11 +247,11 @@ tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g,
 					}
 					tGraph_destroy(cg);
 				}
-				//UF_destroy(nCps);
+				UF_destroy(nCps);
 				k++;
 			}
 			free(mask);
-			//UF_destroy(cps);
+			UF_destroy(cps);
 		}
 		free(vns);
 		tGraph_destroy(sg);
@@ -260,7 +259,7 @@ tSolTable* tSolTable_introduce(tSolTable* childTab, int v, int bag[], tGraph* g,
 	}
 	//
 
-	//tSolTable_destroy(childTab);
+	tSolTable_destroy(childTab);
 	return t;
 }
 
@@ -329,7 +328,7 @@ void tSolTable_destroy(tSolTable* t)
 {
 	free(t->vertices);
 	free(t->weights);
-	free(t->colors);
+	//free(t->colors);
 	free(t->index);
 	free(t);
 }
