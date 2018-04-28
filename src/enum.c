@@ -405,49 +405,107 @@ tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
     tSolTable* newT = tSolTable_create(t1->vertices, t1->nbCol);
     unsigned char* current = calloc(t1->nbCol, sizeof(unsigned char));
     unsigned char* currentT1;
+    unsigned char* tmpc;
     int** edgesT1;
     int** edgesT2;
+    int** toGo = malloc(sizeof(int*) * t1->nbCol*2);
     int* tmp;
     int i;
     int j;
     int k;
-    int l;
-    int m;
+    int reminder;
     int minimum;
     int index;
+    int nbToGo = 0;
 
     for(i = 0; i < t1->nbLine; i++)
     {
-        currentT1 = tSolTable_colorTable(t1, i);
-        edgesT1 = tSolTable_cmp(currentT1, t1->nbCol);
-
         for(j = 0; j < t2->nbLine; j++)
         {
-            current = memcpy(current, tSolTable_colorTable(t2, i), t2->nbCol);
+            currentT1 = tSolTable_colorTable(t1, i);
+            edgesT1 = tSolTable_cmp(currentT1, t1->nbCol);
+
+            current = memcpy(current, tSolTable_colorTable(t2, j), t2->nbCol);
             edgesT2 = tSolTable_cmp(current, t2->nbCol);
-            k = 1;
-            l = 1;
 
-            while(k < t1->nbCol)
+            for(k = 0; k < t1->nbCol; k++)
             {
-                while(l < t1->nbCol)
+                if(edgesT1[k][0] != -1)
                 {
-                    if(isConnected(edgesT1[k], edgesT2[l], t1->nbCol))
-                    {
-                        if(tmp != NULL) free(tmp);
-                        tmp = mergeColor(edgesT1[k], edgesT2[l], t1->nbCol);
-                        minimum = min(k, l);
-
-                        for(m = 0; m < t1->nbCol; m++)
-                        {
-                            if(tmp[m] == -1) break;
-                            current[tmp[m]] = minimum;
-                        }
-                        edgesT2 = tSolTable_cmp(current, t2->nbCol);
-                    }
-                    else l++;
+                    toGo[nbToGo] = edgesT1[k];
+                    nbToGo++;
                 }
-                k++;
+            }
+
+            if(nbToGo != 0)
+            {
+                reminder = nbToGo;
+
+                for(k = 0; k < t1->nbCol; k++)
+                {
+                    if(edgesT2[k][0] != -1)
+                    {
+                        toGo[nbToGo] = edgesT2[k];
+                        nbToGo++;
+                    }
+                }
+
+                if(reminder == nbToGo)
+                {
+                    tmpc = current;
+                    current = currentT1;
+                    currentT1 = tmpc;
+                    nbToGo = 0;
+                }
+                else
+                {
+                    for(k = nbToGo; k < t1->nbCol*2; k++)
+                    {
+                        toGo[k] = NULL;
+                    }
+
+                    tmp = toGo[nbToGo - 1];
+                    toGo[nbToGo - 1] = NULL;
+                    nbToGo--;
+                }
+            }
+
+            while(nbToGo != 0)
+            {
+                for(k = 0; k < t1->nbCol*2; k++)
+                {
+                    index = isConnected(tmp, toGo[k], t1->nbCol);
+                    if(index != -1)
+                    {
+                        reminder = k;
+                        break;
+                    }
+                }
+
+                if(index != -1)
+                {
+                    minimum = min(tmp[index], toGo[reminder][index]);
+                    tmp = mergeColor(tmp, toGo[reminder], t1->nbCol);
+
+                    for(k = 0; k < t1->nbCol; k++)
+                    {
+                        if(tmp[k] == -1) continue;
+                        current[tmp[k]] = minimum;
+                    }
+
+                    toGo[reminder] = NULL;
+                    nbToGo--;
+                }
+                else
+                {
+                    for(k = 0; k < t1->nbCol*2; k++)
+                    {
+                        if(toGo[k] != NULL)
+                        {
+                            tmp = toGo[k];
+                        }
+                    }
+                }
             }
 
             for(k = 0; k < t1->nbCol; k++)
@@ -479,12 +537,12 @@ tSolTable* tSolTable_feuille()
 int** tSolTable_cmp(unsigned char* c, int size)
 {
     int i;
-    int index;
-    int** res = malloc(sizeof(int) * size);
+    int index = 0;
+    int** res = malloc(sizeof(int*) * size);
 
     for(i = 0; i < size; i++)
     {
-        res[i] = calloc(size, sizeof(int));
+        res[i] = malloc(sizeof(int) * size);
         initArrayWith(res[i], -1, size);
     }
 
@@ -540,7 +598,6 @@ int* mergeColor(int* c1, int* c2, int size)
 int isConnected(int* c1, int* c2, int size)
 {
     int tmp;
-    int res = 0;
     int i;
 
     for(i = 0; i < size; i++)
@@ -548,12 +605,11 @@ int isConnected(int* c1, int* c2, int size)
         tmp = dichotomie(c1[i], size, 0, c2);
         if(tmp != -1)
         {
-            res = 1;
-            break;
+            return tmp;
         }
     }
 
-    return res;
+    return -1;
 }
 
 int isFinished(int* t, int size)
@@ -615,6 +671,8 @@ tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs* args)
             break;
         }
     }
+
+    printIntArray(res->vertices, res->nbCol);
 
     return res;
 }

@@ -9,28 +9,26 @@
 #include "tGraph.h"
 #include "niceTD.h"
 #include "steiner.h"
+#include "enum.h"
 
 int main(int argc, char const *argv[])
 {
-    /*int** res;
     int* b1 = malloc(sizeof(int) * 3);
     int* b2 = malloc(sizeof(int) * 3);
 
     b1[0] = 51; b1[1] = 52; b1[2] = 53;
-    b2[0] = 52; b2[1] = 53; b2[2] = 54;
+    b2[0] = 51; b2[1] = 52; b2[2] = 53;
 
-    printf("%d\n", dichotomie(53, 3, 0, b1));
+    tSolTable* t1 = tSolTable_create(b1, 3);
+    tSolTable* t2 = tSolTable_create(b2, 3);
 
-    res = cmpBags(3, b1, b2);
+    tSolTable* res = tSolTable_join(t1, t2);
 
-    printf("Introduce : ");
-    printIntArray(res[0], 3);
-    printf("\nForget : ");
-    printIntArray(res[1], 3);*/
+    tSolTable_view(res);
 
-    SteinerArgs* args = preCalculs(argv[1]);
+    /*SteinerArgs* args = preCalculs(argv[1]);
     ntd_debug(args->ntd, args->bagSize);
     int res = calculSteiner1(args);
 
-    printf("%d\n", res);
+    printf("%d\n", res);*/
 }
