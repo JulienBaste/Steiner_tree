@@ -403,9 +403,11 @@ tSolTable* tSolTable_forget(tSolTable* t, int f)
 tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
 {
     tSolTable* newT = tSolTable_create(t1->vertices, t1->nbCol);
-    unsigned char* current = calloc(t1->nbCol, sizeof(unsigned char));
-    unsigned char* currentT1;
-    unsigned char* tmpc;
+    tSolTable_generate(newT);
+
+    unsigned char* current = malloc(sizeof(unsigned char) * t1->nbCol);
+    unsigned char* currentT1 = malloc(sizeof(unsigned char) * t1->nbCol);
+    unsigned char* tmpc = malloc(sizeof(unsigned char) * t1->nbCol);
     int** edgesT1;
     int** edgesT2;
     int** toGo = malloc(sizeof(int*) * t1->nbCol*2);
@@ -422,39 +424,43 @@ tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
     {
         for(j = 0; j < t2->nbLine; j++)
         {
-            currentT1 = tSolTable_colorTable(t1, i);
+            currentT1 = memcpy(currentT1, tSolTable_colorTable(t1, i), t2->nbCol);
             edgesT1 = tSolTable_cmp(currentT1, t1->nbCol);
 
             current = memcpy(current, tSolTable_colorTable(t2, j), t2->nbCol);
             edgesT2 = tSolTable_cmp(current, t2->nbCol);
 
-            for(k = 0; k < t1->nbCol; k++)
+            for(k = 1; k < t1->nbCol; k++)
             {
-                if(edgesT1[k][0] != -1)
+                if(edgesT1[k][1] != -1)
                 {
                     toGo[nbToGo] = edgesT1[k];
                     nbToGo++;
                 }
             }
 
+            //printf("NbToGo : %d\n", nbToGo);
+
             if(nbToGo != 0)
             {
                 reminder = nbToGo;
 
-                for(k = 0; k < t1->nbCol; k++)
+                for(k = 1; k < t1->nbCol; k++)
                 {
-                    if(edgesT2[k][0] != -1)
+                    if(edgesT2[k][1] != -1)
                     {
                         toGo[nbToGo] = edgesT2[k];
                         nbToGo++;
                     }
                 }
 
+                //printf("Reminder : %d\n", nbToGo);
+
                 if(reminder == nbToGo)
                 {
-                    tmpc = current;
-                    current = currentT1;
-                    currentT1 = tmpc;
+                    tmpc = memcpy(tmpc, current, t1->nbCol);
+                    current = memcpy(current, currentT1, t1->nbCol);
+                    currentT1 = memcpy(currentT1, tmpc, t1->nbCol);
                     nbToGo = 0;
                 }
                 else
@@ -484,7 +490,8 @@ tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
 
                 if(index != -1)
                 {
-                    minimum = min(tmp[index], toGo[reminder][index]);
+                    minimum = min(current[tmp[index]], currentT1[toGo[reminder][index]]);
+                    //printf("%d%d%d\n", current[0],current[1],current[2]);
                     tmp = mergeColor(tmp, toGo[reminder], t1->nbCol);
 
                     for(k = 0; k < t1->nbCol; k++)
@@ -513,19 +520,34 @@ tSolTable* tSolTable_join(tSolTable* t1, tSolTable* t2)
                 if(current[k] == 0 && currentT1[k] != 0) current[k] = currentT1[k];
             }
 
+            printf("%d %d %d\n", current[0], current[1], current[2]);
+
             index = tSolTable_indexOf(newT, current);
 
             if(newT->weights[index] > t1->weights[i] + t2->weights[j])
             {
                 newT->weights[index] = t1->weights[i] + t2->weights[j];
             }
+
+            for(k = 0; k < t1->nbCol; k++)
+            {
+                free(edgesT1[k]);
+                free(edgesT2[k]);
+            }
+
+            free(edgesT1);
+            free(edgesT2);
         }
+        printf("FINI\n");
     }
 
     free(current);
-    free(tmp);
+    free(currentT1);
+    free(tmpc);
+
     tSolTable_destroy(t1);
     tSolTable_destroy(t2);
+
     return newT;
 }
 
@@ -538,9 +560,9 @@ int** tSolTable_cmp(unsigned char* c, int size)
 {
     int i;
     int index = 0;
-    int** res = malloc(sizeof(int*) * size);
+    int** res = malloc(sizeof(int*) * (size + 1));
 
-    for(i = 0; i < size; i++)
+    for(i = 0; i < size + 1; i++)
     {
         res[i] = malloc(sizeof(int) * size);
         initArrayWith(res[i], -1, size);
@@ -645,7 +667,7 @@ tSolTable* tSolTable_computeSon(niceTD* ntd, SteinerArgs* args)
             free(tmp[0]);
             free(tmp[1]);
             free(tmp);
-            tSolTable_destroy(left);*/
+            tSolTable_destroy(left);
             res = left;
             break;
         }

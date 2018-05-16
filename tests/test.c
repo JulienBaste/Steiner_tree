@@ -13,7 +13,7 @@
 
 int main(int argc, char const *argv[])
 {
-    int* b1 = malloc(sizeof(int) * 3);
+    /*int* b1 = malloc(sizeof(int) * 3);
     int* b2 = malloc(sizeof(int) * 3);
 
     b1[0] = 51; b1[1] = 52; b1[2] = 53;
@@ -22,13 +22,18 @@ int main(int argc, char const *argv[])
     tSolTable* t1 = tSolTable_create(b1, 3);
     tSolTable* t2 = tSolTable_create(b2, 3);
 
-    tSolTable* res = tSolTable_join(t1, t2);
+    tSolTable* res;
 
-    tSolTable_view(res);
+    tSolTable_generate(t1);
+    tSolTable_generate(t2);
 
-    /*SteinerArgs* args = preCalculs(argv[1]);
+    res = tSolTable_join(t1, t2);
+
+    tSolTable_view(res);*/
+
+    SteinerArgs* args = preCalculs(argv[1]);
     ntd_debug(args->ntd, args->bagSize);
     int res = calculSteiner1(args);
 
-    printf("%d\n", res);*/
+    printf("%d\n", res);
 }

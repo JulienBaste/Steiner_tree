@@ -118,7 +118,7 @@ void printCharArray(unsigned char t[], const int size)
 
     for(i = 0; i < size; i++)
     {
-        printf("%c\n", t[i]);
+        printf("%d", t[i]);
     }
     printf("\n");
 }

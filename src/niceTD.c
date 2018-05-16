@@ -199,6 +199,7 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
                 {
                     newEdge[(maxEdges/2)] = v;
                 }
+                free(edgesTD[i]);
                 edgesTD[i] = newEdge;
             }
         }
