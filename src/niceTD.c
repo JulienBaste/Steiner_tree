@@ -108,7 +108,6 @@ SteinerArgs* preCalculs(const char* path)
     res->tg = g;
 
     fclose(input);
-    free(da_terminals);
     free(da_bags);
     free(da_parcouru);
     free(da_res);
@@ -207,8 +206,28 @@ int fillEdgesTD(FILE* file, int** edgesTD, int maxEdges, int nbEdge)
         {
             edgesTD[u][index] = v;
         }
+
         index = nextZero(maxEdges, edgesTD[v]);
-        edgesTD[v][index] = u;
+        if(index == -1)
+        {
+            maxEdges = maxEdges * 2;
+            for(i = 0; i < nbEdge; i++)
+            {
+                int* newEdge = malloc(sizeof(int) * maxEdges);
+                initArray(maxEdges, newEdge);
+                copyArray(maxEdges/2, edgesTD[i], newEdge);
+                if(i == v)
+                {
+                    newEdge[(maxEdges/2)] = u;
+                }
+                free(edgesTD[i]);
+                edgesTD[i] = newEdge;
+            }
+        }
+        else
+        {
+            edgesTD[v][index] = u;
+        }
     }
 
     return maxEdges;
